@@ -27,7 +27,13 @@ def update(args):
     with open(args.history_file) as history_file:
         lines = history_file.readlines()
 
-    result = lines[:3]
+    start = 0
+    for line in lines:
+        if line and not line.startswith('..'):
+            break
+        start += 1
+
+    result = lines[:start + 3]
 
     release_date = args.date or date.today().strftime('%Y-%m-%d')
     header = '{} ({})'.format(args.version, release_date)
@@ -37,7 +43,7 @@ def update(args):
     result += _list_history(args.history_dir)
     result.append('\n')
 
-    result += lines[3:]
+    result += lines[start + 3:]
 
     result = ''.join(result)
 
