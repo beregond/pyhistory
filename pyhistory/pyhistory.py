@@ -29,7 +29,7 @@ def update(args):
 
     start = 0
     for line in lines:
-        if line and not line.startswith('..'):
+        if not line.startswith('..') and line != '\n':
             break
         start += 1
 
