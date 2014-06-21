@@ -6,7 +6,7 @@ from . import pyhistory
 parser = argparse.ArgumentParser(
     description="Manage Python project history file.")
 parser.add_argument(
-    '--version', action='version', version="PyHistory ver {}".format(ver))
+    '--version', action='version', version="Pyhistory ver {}".format(ver))
 parser.add_argument('--history-dir', default='history')
 
 subparsers = parser.add_subparsers(help="sub-command help")

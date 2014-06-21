@@ -1,28 +1,31 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-test_pyhistory
-----------------------------------
-
-Tests for `pyhistory` module.
-"""
-
+import os
 import unittest
+import shutil
 
-from pyhistory import pyhistory
+from invoke import run
 
 
 class TestPyhistory(unittest.TestCase):
 
-    def setUp(self):
-        pass
+    test_dir = 'test_dir'
 
-    def test_something(self):
-        pass
+    def setUp(self):
+        try:
+            shutil.rmtree(self.test_dir)
+        except OSError:
+            pass
+        os.mkdir(self.test_dir)
+
+        self.original_working_dir = os.getcwd()
+        os.chdir(self.test_dir)
+
+    def test_add(self):
+        run('pyhi add some_message')
 
     def tearDown(self):
-        pass
+        os.chdir(self.original_working_dir)
+        return
+        shutil.rmtree(self.test_dir)
 
 if __name__ == '__main__':
     unittest.main()
