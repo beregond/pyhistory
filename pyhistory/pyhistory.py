@@ -8,7 +8,7 @@ from hashlib import md5
 
 def add(args):
     _check_history_dir(args.history_dir)
-    hashed = md5(args.message).hexdigest()[:7]
+    hashed = md5(args.message.encode('utf-8')).hexdigest()[:7]
 
     filepath = os.path.join(args.history_dir, hashed)
     if os.path.exists(filepath):
