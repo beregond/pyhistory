@@ -14,7 +14,7 @@ requirements = []
 
 setup(
     name='pyhistory',
-    version='1.0.1',
+    version='1.0.2',
     description='Package to help maintaining HISTORY file for Python project.',
     long_description=readme + '\n\n' + history,
     author='Szczepan Cieślik',
