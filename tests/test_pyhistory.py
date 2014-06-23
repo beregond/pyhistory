@@ -44,10 +44,16 @@ class TestPyhistory(unittest.TestCase):
         self.assertEqual(result.stdout, _join_lines(['', '']))
 
     def test_update(self):
+        self._test_update('update')
+
+    def test_squash(self):
+        self._test_update('squash')
+
+    def _test_update(self, command):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
         run('pyhi add "next message"')
-        run('pyhi update 1.0.6 --date today')
+        run('pyhi {} 1.0.6 --date today'.format(command))
         self.assertEqual(
             _get_fixture_content('history1_after.rst'),
             _get_test_file_content('HISTORY.rst')

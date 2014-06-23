@@ -26,6 +26,14 @@ parser_update.add_argument(
 parser_update.add_argument('--date', help="date of release (by default today)")
 parser_update.set_defaults(func=pyhistory.update)
 
+parser_squash = subparsers.add_parser(
+    'squash', help='update history file (alias to update)')
+parser_squash.add_argument('version')
+parser_squash.add_argument(
+    '--history-file', default='HISTORY.rst')
+parser_squash.add_argument('--date', help="date of release (by default today)")
+parser_squash.set_defaults(func=pyhistory.update)
+
 parser_clear = subparsers.add_parser(
     'clear', help="remove entries from history directory")
 parser_clear.set_defaults(func=pyhistory.clear)
