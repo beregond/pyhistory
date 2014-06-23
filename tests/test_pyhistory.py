@@ -37,7 +37,7 @@ class TestPyhistory(unittest.TestCase):
         run('pyhi add "next message"')
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '* next message', '']))
+            ['', '* next message', '* some_message', '']))
 
         run('pyhi clear')
         result = run('pyhi list')

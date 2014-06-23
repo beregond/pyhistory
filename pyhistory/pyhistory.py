@@ -60,6 +60,7 @@ def clear(args):
 def _list_history(history_dir):
     result = []
     for root, _, files in os.walk(history_dir):
+        files.sort()
         for f in files:
             fullpath = os.path.join(root, f)
             with open(fullpath) as file_handler:
