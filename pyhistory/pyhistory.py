@@ -93,15 +93,19 @@ def _delete_history_dir(history_dir):
 
 def _select_history_dir(args):
     filepath = os.path.join(os.getcwd(), args.history_file)
-    return os.path.join(_select_dir_with_file(filepath), args.history_dir)
+    return os.path.join(select_dir_with_file(filepath), args.history_dir)
 
 
-def _select_dir_with_file(filepath):
+def select_dir_with_file(filepath):
     dirname = os.path.dirname(filepath)
     if os.path.exists(filepath):
         return dirname
 
     new_dirname = os.path.abspath(os.path.join(dirname, '..'))
+
+    if dirname == new_dirname:
+        raise RuntimeError('File not found!')
+
     new_filepath = os.path.join(new_dirname, os.path.basename(filepath))
 
-    return _select_dir_with_file(new_filepath)
+    return select_dir_with_file(new_filepath)

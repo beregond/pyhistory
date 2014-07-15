@@ -4,6 +4,8 @@ import shutil
 
 from invoke import run
 
+from pyhistory.pyhistory import select_dir_with_file
+
 FIXTURES_DIR_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     'fixtures'
@@ -62,7 +64,7 @@ class TestPyhistory(unittest.TestCase):
             _get_test_file_content('HISTORY.rst')
         )
 
-    def test_add_when_not_in_history_file_directory(self):
+    def test_pyhistory_when_not_in_history_file_directory(self):
         command = 'update'
 
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -93,6 +95,22 @@ class TestPyhistory(unittest.TestCase):
             _get_fixture_content('history1_after.rst'),
             _get_test_file_content('HISTORY.rst')
         )
+
+    def test_select_dir_with_file(self):
+        os.makedirs('one/two')
+        os.chdir('one')
+        proper_dir = os.getcwd()
+        open('some_file.rst', 'w').close()
+        os.chdir('two')
+
+        selected_dir = select_dir_with_file(
+            os.path.join(os.getcwd(), 'some_file.rst'))
+
+        self.assertEqual(proper_dir, selected_dir)
+
+    def test_select_dir_with_fails_when_not_found(self):
+        self.assertRaises(
+            RuntimeError, select_dir_with_file, '/!hope_this_not_exists')
 
     def tearDown(self):
         os.chdir(self.original_working_dir)
