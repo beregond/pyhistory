@@ -3,6 +3,12 @@
 History
 -------
 
+1.1 (2014-07-15)
+++++++++++++++++
+
+* Added timestamp to generated files, so now entries are properly ordered.
+* Pyhistory traverses directory tree to find proper place for history directory.
+
 1.0.3 (2014-06-23)
 ++++++++++++++++++
 
