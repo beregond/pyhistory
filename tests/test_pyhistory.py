@@ -25,10 +25,13 @@ class TestPyhistory(unittest.TestCase):
         os.chdir(TEST_DIR)
 
     def test_list_empty(self):
+        open('HISTORY.rst', 'w').close()
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(['', '']))
 
     def test_add_list_and_clear(self):
+        open('HISTORY.rst', 'w').close()
+
         run('pyhi add some_message')
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
@@ -54,6 +57,38 @@ class TestPyhistory(unittest.TestCase):
         run('pyhi add some_message')
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today'.format(command))
+        self.assertEqual(
+            _get_fixture_content('history1_after.rst'),
+            _get_test_file_content('HISTORY.rst')
+        )
+
+    def test_add_when_not_in_history_file_directory(self):
+        command = 'update'
+
+        _load_fixture('history1.rst', 'HISTORY.rst')
+
+        original_working_dir = os.getcwd()
+        os.makedirs('one/two')
+        os.chdir('one/two')
+
+        run('pyhi add some_message')
+        run('pyhi add "next message"')
+
+        self.assertEqual(0, len(os.listdir(os.getcwd())))
+
+        result = run('pyhi list')
+        self.assertEqual(result.stdout, _join_lines(
+            ['', '* next message', '* some_message', '']))
+
+        os.chdir(original_working_dir)
+        result = run('pyhi list')
+        self.assertEqual(result.stdout, _join_lines(
+            ['', '* next message', '* some_message', '']))
+
+        os.chdir('one/two')
+        run('pyhi {} 1.0.6 --date today'.format(command))
+        os.chdir(original_working_dir)
+
         self.assertEqual(
             _get_fixture_content('history1_after.rst'),
             _get_test_file_content('HISTORY.rst')

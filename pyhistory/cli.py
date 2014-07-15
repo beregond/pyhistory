@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--version', action='version', version="Pyhistory ver {}".format(ver))
 parser.add_argument('--history-dir', default='history')
+parser.add_argument('--history-file', default='HISTORY.rst')
 
 subparsers = parser.add_subparsers(help="sub-command help")
 
@@ -25,7 +26,6 @@ update_parsers = [
 
 for uparser in update_parsers:
     uparser.add_argument('version')
-    uparser.add_argument('--history-file', default='HISTORY.rst')
     uparser.add_argument('--date', help="date of release (by default today)")
     uparser.set_defaults(func=pyhistory.update)
 

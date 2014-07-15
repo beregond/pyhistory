@@ -7,10 +7,13 @@ from hashlib import md5
 
 
 def add(args):
-    _check_history_dir(args.history_dir)
+
+    history_dir = _select_history_dir(args)
+
+    _check_history_dir(history_dir)
     hashed = md5(args.message.encode('utf-8')).hexdigest()[:7]
 
-    filepath = os.path.join(args.history_dir, hashed)
+    filepath = os.path.join(history_dir, hashed)
     if os.path.exists(filepath):
         raise RuntimeError("Given entry already exists!")
 
@@ -19,13 +22,17 @@ def add(args):
 
 
 def list_history(args):
-    lines = _list_history(args.history_dir)
+    history_dir = _select_history_dir(args)
+    lines = _list_history(history_dir)
     print('\n' + ''.join(lines))
 
 
 def update(args):
-    with open(args.history_file) as history_file:
-        lines = history_file.readlines()
+    history_dir = _select_history_dir(args)
+    history_file = os.path.join(history_dir, '..', args.history_file)
+
+    with open(history_file) as hfile:
+        lines = hfile.readlines()
 
     start = 0
     for line in lines:
@@ -40,21 +47,22 @@ def update(args):
     result.append(header + '\n')
     result.append('+' * len(header) + '\n\n')
 
-    result += _list_history(args.history_dir)
+    result += _list_history(history_dir)
     result.append('\n')
 
     result += lines[start + 3:]
 
     result = ''.join(result)
 
-    with open(args.history_file, 'w') as history_file:
-        history_file.write(result)
+    with open(history_file, 'w') as hfile:
+        hfile.write(result)
 
-    _delete_history_dir(args.history_dir)
+    _delete_history_dir(history_dir)
 
 
 def clear(args):
-    _delete_history_dir(args.history_dir)
+    history_dir = _select_history_dir(args)
+    _delete_history_dir(history_dir)
 
 
 def _list_history(history_dir):
@@ -81,3 +89,19 @@ def _delete_history_dir(history_dir):
         shutil.rmtree(history_dir)
     except OSError:
         pass
+
+
+def _select_history_dir(args):
+    filepath = os.path.join(os.getcwd(), args.history_file)
+    return os.path.join(_select_dir_with_file(filepath), args.history_dir)
+
+
+def _select_dir_with_file(filepath):
+    dirname = os.path.dirname(filepath)
+    if os.path.exists(filepath):
+        return dirname
+
+    new_dirname = os.path.abspath(os.path.join(dirname, '..'))
+    new_filepath = os.path.join(new_dirname, os.path.basename(filepath))
+
+    return _select_dir_with_file(new_filepath)
