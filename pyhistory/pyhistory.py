@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os.path
 import shutil
+import time
 from datetime import date
 from hashlib import md5
 
@@ -11,11 +12,12 @@ def add(args):
     history_dir = _select_history_dir(args)
 
     _check_history_dir(history_dir)
-    hashed = md5(args.message.encode('utf-8')).hexdigest()[:7]
+    hashed = '{}-{}'.format(
+        time.time(), md5(args.message.encode('utf-8')).hexdigest()[:7])
 
     filepath = os.path.join(history_dir, hashed)
     if os.path.exists(filepath):
-        raise RuntimeError("Given entry already exists!")
+        raise RuntimeError("Collision you lucky bastard!")
 
     with open(filepath, 'w') as entry_file:
         entry_file.write(args.message + '\n')

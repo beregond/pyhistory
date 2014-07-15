@@ -42,7 +42,7 @@ class TestPyhistory(unittest.TestCase):
         run('pyhi add "next message"')
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
-            ['', '* next message', '* some_message', '']))
+            ['', '* some_message', '* next message', '']))
 
         run('pyhi clear')
         result = run('pyhi list')
@@ -80,12 +80,12 @@ class TestPyhistory(unittest.TestCase):
 
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
-            ['', '* next message', '* some_message', '']))
+            ['', '* some_message', '* next message', '']))
 
         os.chdir(original_working_dir)
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
-            ['', '* next message', '* some_message', '']))
+            ['', '* some_message', '* next message', '']))
 
         os.chdir('one/two')
         run('pyhi {} 1.0.6 --date today'.format(command))
