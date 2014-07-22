@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 __author__ = 'Szczepan Cieślik'
 __email__ = 'szczepan.cieslik@gmail.com'
-__version__ = '1.1'
+__version__ = '1.2'

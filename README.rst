@@ -53,7 +53,26 @@ Features
 
     $ pyhi update 0.4.2
 
-* Clear history:
+* Delete selected entries:
+
+.. code-block:: bash
+
+    $ pyhi delete
+
+    1. New feature
+    2. Something
+    3. Another one
+    4. Wrong one
+
+    (Delete by choosing entries numbers.)
+
+    $ pyhi delete 2 4
+    $ pyhi list
+
+    * New feature
+    * Another one
+
+* Clear all history:
 
 .. code-block:: bash
 
