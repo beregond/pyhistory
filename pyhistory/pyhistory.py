@@ -27,7 +27,7 @@ def add(args):
 
 def list_history(args):
     history_dir = _select_history_dir(args)
-    lines = _list_history(history_dir)
+    lines = ['* {}'.format(line) for line in _list_history_lines(history_dir)]
     print('\n' + ''.join(lines))
 
 
@@ -51,7 +51,9 @@ def update(args):
     result.append(header + '\n')
     result.append('+' * len(header) + '\n\n')
 
-    result += _list_history(history_dir)
+    new_lines = [
+        '* {}'.format(line) for line in _list_history_lines(history_dir)]
+    result += new_lines
     result.append('\n')
 
     result += lines[start + 3:]
@@ -69,18 +71,6 @@ def clear(args):
     _delete_history_dir(history_dir)
 
 
-def _list_history(history_dir):
-    result = []
-    for root, _, files in os.walk(history_dir):
-        files.sort()
-        for f in files:
-            fullpath = os.path.join(root, f)
-            with open(fullpath) as file_handler:
-                result.append('* ' + file_handler.read())
-
-    return result
-
-
 def _list_history_files(history_dir):
     result = []
     for root, _, files in os.walk(history_dir):
@@ -88,6 +78,16 @@ def _list_history_files(history_dir):
         result += [os.path.join(root, f) for f in files]
 
     return result
+
+
+def _list_history_lines(history_dir):
+    files = _list_history_files(history_dir)
+    lines = []
+    for file_ in files:
+        with open(file_) as file_handler:
+            lines.append(file_handler.read())
+
+    return lines
 
 
 def _check_history_dir(history_dir):
