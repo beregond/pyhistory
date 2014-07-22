@@ -112,6 +112,53 @@ class TestPyhistory(unittest.TestCase):
         self.assertRaises(
             RuntimeError, select_dir_with_file, '/!hope_this_not_exists')
 
+    def test_delete(self):
+        _load_fixture('history1.rst', 'HISTORY.rst')
+
+        run('pyhi add some_message')
+        run('pyhi add "next message"')
+
+        result = run('pyhi list')
+        self.assertEqual(result.stdout, _join_lines(
+            ['', '* some_message', '* next message', '']))
+
+        result = run('pyhi delete')
+        self.assertEqual(result.stdout, _join_lines([
+            '', '1. some_message', '2. next message', '',
+            '(Delete by choosing entries numbers.)',
+        ]))
+
+        run('pyhi delete 1')
+        result = run('pyhi list')
+        self.assertEqual(result.stdout, _join_lines(
+            ['', '* next message', '']))
+
+        run('pyhi add test')
+        run('pyhi add test2')
+
+        result = run('pyhi delete')
+        self.assertEqual(result.stdout, _join_lines([
+            '', '1. next message', '2. test', '3. test2', '',
+            '(Delete by choosing entries numbers.)',
+        ]))
+
+        run('pyhi delete 10')
+        result = run('pyhi delete')
+        self.assertEqual(result.stdout, _join_lines([
+            '', '1. next message', '2. test', '3. test2', '',
+            '(Delete by choosing entries numbers.)',
+        ]))
+
+        run('pyhi delete 2 3 5 101')
+        result = run('pyhi list')
+        self.assertEqual(result.stdout, _join_lines(
+            ['', '* next message', '']))
+
+    def test_delete_in_non_root(self):
+        os.makedirs('one/two')
+        os.chdir('one')
+        self.test_delete()
+
     def tearDown(self):
         os.chdir(self.original_working_dir)
         shutil.rmtree(TEST_DIR)
@@ -120,6 +167,7 @@ class TestPyhistory(unittest.TestCase):
 def _get_test_file_content(name):
     with open(os.path.join(TEST_DIR_PATH, name)) as test_file:
         return test_file.read()
+
 
 def _get_fixture_content(name):
     with open(os.path.join(FIXTURES_DIR_PATH, name)) as fixture:
