@@ -3,6 +3,11 @@
 History
 -------
 
+1.2.1 (2014-08-06)
+++++++++++++++++++
+
+* Improved format of generated hash (no miliseconds now).
+
 1.2 (2014-07-22)
 ++++++++++++++++
 
