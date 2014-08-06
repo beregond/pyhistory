@@ -15,7 +15,6 @@ Python History
 Package to help maintaining HISTORY file for Python project.
 
 * Free software: BSD license
-* Documentation: http://pyhistory.readthedocs.org.
 * Source: https://github.com/beregond/pyhistory
 
 Note
