@@ -15,7 +15,7 @@ def add(args):
 
     _check_history_dir(history_dir)
     hashed = '{}-{}'.format(
-        time.time(), md5(args.message.encode('utf-8')).hexdigest()[:7])
+        int(time.time()), md5(args.message.encode('utf-8')).hexdigest()[:7])
 
     filepath = os.path.join(history_dir, hashed)
     if os.path.exists(filepath):

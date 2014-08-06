@@ -1,6 +1,6 @@
-===============================
+==============
 Python History
-===============================
+==============
 
 .. image:: https://badge.fury.io/py/pyhistory.png
     :target: http://badge.fury.io/py/pyhistory
@@ -16,6 +16,7 @@ Package to help maintaining HISTORY file for Python project.
 
 * Free software: BSD license
 * Documentation: http://pyhistory.readthedocs.org.
+* Source: https://github.com/beregond/pyhistory
 
 Note
 ----
@@ -25,6 +26,15 @@ concurrency (literally: each pull request on GitHub had conflicts in
 HISTORY.rst file because it was updated before creating PR). Take into account
 it may NOT fit into your environment and/or workflow since it was cutted for
 specific case, but it's good if so. :)
+
+History directory
+-----------------
+
+Pyhistory will traverse directory tree until it finds ``history file`` (by
+default ``HISTORY.rst``) and this will be root, where history directory will be
+created, in which all entries will be stored. Thanks to that you can add, list
+or remove entries from any point in your project - all commands will be
+executed in context of root directory.
 
 Features
 --------
