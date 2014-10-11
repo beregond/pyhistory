@@ -40,7 +40,7 @@ class TestPyhistory(unittest.TestCase):
         self.assertEqual(result.stdout, _join_lines(
             ['', '* some_message', '']))
 
-        time.sleep(1)
+        _sleep()
 
         run('pyhi add "next message"')
         result = run('pyhi list')
@@ -60,7 +60,7 @@ class TestPyhistory(unittest.TestCase):
     def _test_update(self, command):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
-        time.sleep(1)
+        _sleep()
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today'.format(command))
         self.assertEqual(
@@ -76,9 +76,9 @@ class TestPyhistory(unittest.TestCase):
         os.chdir('one/two')
 
         run('pyhi add some_message')
-        time.sleep(1)
+        _sleep()
         run('pyhi add "next message"')
-        time.sleep(1)
+        _sleep()
 
         self.assertEqual(0, len(os.listdir(os.getcwd())))
 
@@ -120,9 +120,9 @@ class TestPyhistory(unittest.TestCase):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
         run('pyhi add some_message')
-        time.sleep(1)
+        _sleep()
         run('pyhi add "next message"')
-        time.sleep(1)
+        _sleep()
 
         result = run('pyhi list')
         self.assertEqual(result.stdout, _join_lines(
@@ -140,7 +140,7 @@ class TestPyhistory(unittest.TestCase):
             ['', '* next message', '']))
 
         run('pyhi add test')
-        time.sleep(1)
+        _sleep()
         run('pyhi add test2')
 
         result = run('pyhi delete')
@@ -189,3 +189,7 @@ def _load_fixture(fixture_name, destination):
 
 def _join_lines(output):
     return '\n'.join(output) + '\n'
+
+
+def _sleep():
+    time.sleep(0.001)

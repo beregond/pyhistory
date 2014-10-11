@@ -15,11 +15,12 @@ def add(args):
 
     _check_history_dir(history_dir)
     hashed = '{}-{}'.format(
-        int(time.time()), md5(args.message.encode('utf-8')).hexdigest()[:7])
+        int(time.time() * 1000),
+        md5(args.message.encode('utf-8')).hexdigest()[:7])
 
     filepath = os.path.join(history_dir, hashed)
     if os.path.exists(filepath):
-        raise RuntimeError("Collision you lucky bastard!")
+        raise RuntimeError("Collision, you lucky bastard!")
 
     with open(filepath, 'w') as entry_file:
         entry_file.write(args.message + '\n')
@@ -114,13 +115,13 @@ def select_dir_with_file(filepath):
     if os.path.exists(filepath):
         return dirname
 
+    history_file_name = os.path.basename(filepath)
     new_dirname = os.path.abspath(os.path.join(dirname, '..'))
 
     if dirname == new_dirname:
-        raise RuntimeError('File not found!')
+        raise RuntimeError('History file not found!', history_file_name)
 
-    new_filepath = os.path.join(new_dirname, os.path.basename(filepath))
-
+    new_filepath = os.path.join(new_dirname, history_file_name)
     return select_dir_with_file(new_filepath)
 
 
