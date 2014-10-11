@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+
+from pyhistory import __version__, __author__, __email__
 
 
 readme = open('README.rst').read()
@@ -14,11 +16,11 @@ requirements = []
 
 setup(
     name='pyhistory',
-    version='1.2.1',
+    version=__version__,
     description='Package to help maintaining HISTORY file for Python project.',
     long_description=readme + '\n\n' + history,
-    author='Szczepan Cieślik',
-    author_email='szczepan.cieslik@gmail.com',
+    author=__author__,
+    author_email=__email__,
     url='https://github.com/beregond/pyhistory',
     packages=[
         'pyhistory',
