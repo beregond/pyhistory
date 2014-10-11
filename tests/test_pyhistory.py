@@ -3,7 +3,7 @@ import time
 import unittest
 import shutil
 
-from invoke import run
+from invoke import run as original_run
 
 from pyhistory.pyhistory import select_dir_with_file
 
@@ -13,6 +13,10 @@ FIXTURES_DIR_PATH = os.path.join(
 )
 TEST_DIR = 'test_dir'
 TEST_DIR_PATH = os.path.join(os.getcwd(), TEST_DIR)
+
+
+def run(command):
+    return original_run(command, hide=True)
 
 
 class TestPyhistory(unittest.TestCase):
