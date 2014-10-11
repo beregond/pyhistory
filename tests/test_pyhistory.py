@@ -72,6 +72,43 @@ class TestPyhistory(unittest.TestCase):
             _get_test_file_content('HISTORY.rst')
         )
 
+    def test_update_at_line(self):
+        self._test_update_at_line('update')
+
+    def test_squash_at_line(self):
+        self._test_update_at_line('squash')
+
+    def _test_update_at_line(self, command):
+        _load_fixture('history1.rst', 'HISTORY.rst')
+        run('pyhi add some_message')
+        _sleep()
+        run('pyhi add "next message"')
+        run('pyhi {} 1.0.6 --date today --at-line 1'.format(command))
+        self.assertEqual(
+            _get_fixture_content('history1_at_line_after.rst'),
+            _get_test_file_content('HISTORY.rst')
+        )
+
+        _load_fixture('history1.rst', 'HISTORY.rst')
+        run('pyhi add some_message')
+        _sleep()
+        run('pyhi add "next message"')
+        run('pyhi {} 1.0.6 --date today --at-line 0'.format(command))
+        self.assertEqual(
+            _get_fixture_content('history1_at_line_after.rst'),
+            _get_test_file_content('HISTORY.rst')
+        )
+
+        _load_fixture('history1.rst', 'HISTORY.rst')
+        run('pyhi add some_message')
+        _sleep()
+        run('pyhi add "next message"')
+        run('pyhi {} 1.0.6 --date today --at-line 7'.format(command))
+        self.assertEqual(
+            _get_fixture_content('history1_at_line_after2.rst'),
+            _get_test_file_content('HISTORY.rst')
+        )
+
     def test_pyhistory_when_not_in_history_file_directory(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 

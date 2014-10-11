@@ -39,13 +39,8 @@ def update(args):
     with open(history_file) as hfile:
         lines = hfile.readlines()
 
-    start = 0
-    for line in lines:
-        if not line.startswith('..') and line != '\n':
-            break
-        start += 1
-
-    result = lines[:start + 3]
+    break_line = _calculate_break_line(args, lines)
+    result = lines[:break_line]
 
     release_date = args.date or date.today().strftime('%Y-%m-%d')
     header = '{} ({})'.format(args.version, release_date)
@@ -57,7 +52,7 @@ def update(args):
     result += new_lines
     result.append('\n')
 
-    result += lines[start + 3:]
+    result += lines[break_line:]
 
     result = ''.join(result)
 
@@ -65,6 +60,19 @@ def update(args):
         hfile.write(result)
 
     _delete_history_dir(history_dir)
+
+
+def _calculate_break_line(args, lines):
+    if args.at_line:
+        return max(0, int(args.at_line) - 1)
+
+    start = 0
+    for line in lines:
+        if not line.startswith('..') and line != '\n':
+            break
+        start += 1
+
+    return start + 3
 
 
 def clear(args):

@@ -31,6 +31,8 @@ update_parsers = [
 for uparser in update_parsers:
     uparser.add_argument('version')
     uparser.add_argument('--date', help="date of release (by default today)")
+    uparser.add_argument(
+        '--at-line', help="at which line put history in history file")
     uparser.set_defaults(func=pyhistory.update)
 
 # Clear.
