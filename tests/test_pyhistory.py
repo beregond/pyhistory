@@ -6,6 +6,7 @@ import shutil
 from invoke import run as original_run
 
 from pyhistory.pyhistory import select_dir_with_file
+from pyhistory.file_config import get_defaults_from_config_file_if_exists
 
 FIXTURES_DIR_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
@@ -30,6 +31,10 @@ class TestPyhistory(unittest.TestCase):
 
         self.original_working_dir = os.getcwd()
         os.chdir(TEST_DIR)
+
+    def tearDown(self):
+        os.chdir(self.original_working_dir)
+        shutil.rmtree(TEST_DIR)
 
     def test_list_empty(self):
         open('HISTORY.rst', 'w').close()
@@ -207,10 +212,32 @@ class TestPyhistory(unittest.TestCase):
         os.chdir('one')
         self.test_delete()
 
-    def tearDown(self):
-        os.chdir(self.original_working_dir)
-        shutil.rmtree(TEST_DIR)
+    def test_get_config_from_file(self):
+        _load_fixture('setup.cfg', 'empty.txt')
+        pattern = {
+            'history_dir': None,
+            'history_file': None,
+            'at_line': None,
+        }
+        self.assertEqual(pattern, get_defaults_from_config_file_if_exists())
 
+    def test_load_config_from_setup_cfg(self):
+        _load_fixture('setup.cfg', 'setup.cfg')
+        pattern = {
+            'history_dir': None,
+            'history_file': 'HISTORY.rst',
+            'at_line': '42',
+        }
+        self.assertEqual(pattern, get_defaults_from_config_file_if_exists())
+
+    def test_load_config_when_file_doesnt_exist(self):
+        pattern = {
+            'history_dir': None,
+            'history_file': None,
+            'at_line': None,
+        }
+        self.assertEqual(
+            pattern, get_defaults_from_config_file_if_exists('!wrong'))
 
 def _get_test_file_content(name):
     with open(os.path.join(TEST_DIR_PATH, name)) as test_file:

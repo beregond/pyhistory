@@ -1,15 +1,25 @@
 import argparse
 
 from . import __version__ as ver
-from . import pyhistory
+from . import pyhistory, file_config
+
+# Default values.
+default_values = file_config.get_defaults_from_config_file_if_exists()
+to_override_if_none = {
+    'history_dir': 'history',
+    'history_file': 'HISTORY.rst',
+}
+
+for key, value in to_override_if_none.items():
+    default_values[key] = default_values[key] or value
 
 # General parser.
 parser = argparse.ArgumentParser(
     description="Manage Python project history file.")
 parser.add_argument(
     '--version', action='version', version="Pyhistory ver {}".format(ver))
-parser.add_argument('--history-dir', default='history')
-parser.add_argument('--history-file', default='HISTORY.rst')
+parser.add_argument('--history-dir', default=default_values['history_dir'])
+parser.add_argument('--history-file', default=default_values['history_file'])
 
 subparsers = parser.add_subparsers(help="sub-command help")
 

@@ -1,12 +1,13 @@
 from __future__ import print_function
 
-
 import os.path
 import shutil
 import time
 from itertools import count, chain
 from datetime import date
 from hashlib import md5
+
+from .utilities import find_file_across_path
 
 
 def add(args):
@@ -120,17 +121,11 @@ def _select_history_dir(args):
 
 def select_dir_with_file(filepath):
     dirname = os.path.dirname(filepath)
-    if os.path.exists(filepath):
-        return dirname
-
-    history_file_name = os.path.basename(filepath)
-    new_dirname = os.path.abspath(os.path.join(dirname, '..'))
-
-    if dirname == new_dirname:
-        raise RuntimeError('History file not found!', history_file_name)
-
-    new_filepath = os.path.join(new_dirname, history_file_name)
-    return select_dir_with_file(new_filepath)
+    filename = os.path.basename(filepath)
+    try:
+        return os.path.dirname(find_file_across_path(dirname, filename))
+    except RuntimeError as error:
+        raise RuntimeError('History file not found!', error)
 
 
 def delete(args):
