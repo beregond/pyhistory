@@ -3,6 +3,12 @@
 History
 -------
 
+1.3 (2014-10-17)
+++++++++++++++++
+
+* Timestamps are now in miliseconds (again).
+* Added load config from file.
+
 1.2.1 (2014-08-06)
 ++++++++++++++++++
 
