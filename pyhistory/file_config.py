@@ -1,5 +1,8 @@
 import os
-from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+try:
+    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+except ImportError:
+    from configparser import ConfigParser, NoSectionError, NoOptionError
 
 from .utilities import find_file_across_path
 
