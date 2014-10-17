@@ -30,10 +30,11 @@ History directory
 -----------------
 
 Pyhistory will traverse directory tree until it finds ``history file`` (by
-default ``HISTORY.rst``) and this will be root, where history directory will be
-created, in which all entries will be stored. Thanks to that you can add, list
-or remove entries from any point in your project - all commands will be
-executed in context of root directory.
+default ``HISTORY.rst``, can be changed in ``setup.cfg``, see section ``Config
+file``) and this will be root, where history directory will be created, in
+which all entries will be stored. Thanks to that you can add, list or remove
+entries from any point in your project - all commands will be executed in
+context of root directory.
 
 Features
 --------
@@ -42,14 +43,14 @@ Features
 
 * Add history entry:
 
-.. code-block:: bash
+  .. code-block:: bash
 
     $ pyhi add 'New feature'
     $ pyhi add Something
 
 * List history entries:
 
-.. code-block:: bash
+  .. code-block:: bash
 
     $ pyhi list
 
@@ -58,13 +59,13 @@ Features
 
 * Update your history file with entries for given release:
 
-.. code-block:: bash
+  .. code-block:: bash
 
     $ pyhi update 0.4.2
 
 * Delete selected entries:
 
-.. code-block:: bash
+  .. code-block:: bash
 
     $ pyhi delete
 
@@ -83,6 +84,18 @@ Features
 
 * Clear all history:
 
-.. code-block:: bash
+  .. code-block:: bash
 
     $ pyhi clear
+
+* Config file:
+
+  You can adjust Pyhistory behaviour to your needs by ``setup.cfg`` file. Just
+  put ``pyhistory`` section in there:
+
+  .. code-block:: ini
+
+    [pyhistory]
+    history_dir = some_dir # 'history' by default
+    history_file = myhistory.rst # 'HISTORY.rst' by default
+    at_line = 42 # By default history will be injected after first header
