@@ -1,8 +1,8 @@
 import os
 import time
-import unittest
 import shutil
 
+import pytest
 from invoke import run as original_run
 
 from pyhistory.pyhistory import select_dir_with_file
@@ -20,9 +20,14 @@ def run(command):
     return original_run(command, hide=True)
 
 
-class TestPyhistory(unittest.TestCase):
+def _list_dir_without_dotfiles(path):
+    dirs = os.listdir(path)
+    return [d for d in dirs if not d.startswith('.')]
 
-    def setUp(self):
+
+class TestPyhistory(object):
+
+    def setup_method(self, method):
         try:
             shutil.rmtree(TEST_DIR)
         except OSError:
@@ -32,33 +37,32 @@ class TestPyhistory(unittest.TestCase):
         self.original_working_dir = os.getcwd()
         os.chdir(TEST_DIR)
 
-    def tearDown(self):
+    def teardown_method(self, method):
         os.chdir(self.original_working_dir)
         shutil.rmtree(TEST_DIR)
 
     def test_list_empty(self):
         open('HISTORY.rst', 'w').close()
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(['', '']))
+        assert result.stdout == _join_lines(['', ''])
 
     def test_add_list_and_clear(self):
         open('HISTORY.rst', 'w').close()
 
         run('pyhi add some_message')
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '']))
+        assert result.stdout == _join_lines(['', '* some_message', ''])
 
         _sleep()
 
         run('pyhi add "next message"')
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '* next message', '']))
+        assert result.stdout == _join_lines(
+            ['', '* some_message', '* next message', ''])
 
         run('pyhi clear')
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(['', '']))
+        assert result.stdout == _join_lines(['', ''])
 
     def test_update(self):
         self._test_update('update')
@@ -72,10 +76,10 @@ class TestPyhistory(unittest.TestCase):
         _sleep()
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today'.format(command))
-        self.assertEqual(
-            _get_fixture_content('history1_after.rst'),
-            _get_test_file_content('HISTORY.rst')
-        )
+
+        content = _get_fixture_content('history1_after.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        assert content == file_content
 
     def test_update_at_line(self):
         self._test_update_at_line('update')
@@ -89,30 +93,30 @@ class TestPyhistory(unittest.TestCase):
         _sleep()
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today --at-line 1'.format(command))
-        self.assertEqual(
-            _get_fixture_content('history1_at_line_after.rst'),
-            _get_test_file_content('HISTORY.rst')
-        )
+
+        content = _get_fixture_content('history1_at_line_after.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        assert content == file_content
 
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today --at-line 0'.format(command))
-        self.assertEqual(
-            _get_fixture_content('history1_at_line_after.rst'),
-            _get_test_file_content('HISTORY.rst')
-        )
+
+        content = _get_fixture_content('history1_at_line_after.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        assert content == file_content
 
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
         run('pyhi {} 1.0.6 --date today --at-line 7'.format(command))
-        self.assertEqual(
-            _get_fixture_content('history1_at_line_after2.rst'),
-            _get_test_file_content('HISTORY.rst')
-        )
+
+        content = _get_fixture_content('history1_at_line_after2.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        assert content == file_content
 
     def test_pyhistory_when_not_in_history_file_directory(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -126,25 +130,24 @@ class TestPyhistory(unittest.TestCase):
         run('pyhi add "next message"')
         _sleep()
 
-        self.assertEqual(0, len(os.listdir(os.getcwd())))
+        assert 0 == len(_list_dir_without_dotfiles(os.getcwd()))
 
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '* next message', '']))
+        assert result.stdout == _join_lines(
+            ['', '* some_message', '* next message', ''])
 
         os.chdir(original_working_dir)
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '* next message', '']))
+        assert result.stdout == _join_lines(
+            ['', '* some_message', '* next message', ''])
 
         os.chdir('one/two')
         run('pyhi update 1.0.6 --date today')
         os.chdir(original_working_dir)
 
-        self.assertEqual(
-            _get_fixture_content('history1_after.rst'),
-            _get_test_file_content('HISTORY.rst')
-        )
+        content = _get_fixture_content('history1_after.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        assert content == file_content
 
     def test_select_dir_with_file(self):
         os.makedirs('one/two')
@@ -156,11 +159,12 @@ class TestPyhistory(unittest.TestCase):
         selected_dir = select_dir_with_file(
             os.path.join(os.getcwd(), 'some_file.rst'))
 
-        self.assertEqual(proper_dir, selected_dir)
+        assert proper_dir == selected_dir
 
     def test_select_dir_with_fails_when_not_found(self):
-        self.assertRaises(
-            RuntimeError, select_dir_with_file, '/!hope_this_not_exists')
+
+        with pytest.raises(RuntimeError):
+            select_dir_with_file('/!hope_this_does_not_exist')
 
     def test_delete(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -171,41 +175,39 @@ class TestPyhistory(unittest.TestCase):
         _sleep()
 
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* some_message', '* next message', '']))
+        assert result.stdout == _join_lines(
+            ['', '* some_message', '* next message', ''])
 
         result = run('pyhi delete')
-        self.assertEqual(result.stdout, _join_lines([
+        assert result.stdout == _join_lines([
             '', '1. some_message', '2. next message', '',
             '(Delete by choosing entries numbers.)',
-        ]))
+        ])
 
         run('pyhi delete 1')
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* next message', '']))
+        assert result.stdout == _join_lines(['', '* next message', ''])
 
         run('pyhi add test')
         _sleep()
         run('pyhi add test2')
 
         result = run('pyhi delete')
-        self.assertEqual(result.stdout, _join_lines([
+        assert result.stdout == _join_lines([
             '', '1. next message', '2. test', '3. test2', '',
             '(Delete by choosing entries numbers.)',
-        ]))
+        ])
 
         run('pyhi delete 10')
         result = run('pyhi delete')
-        self.assertEqual(result.stdout, _join_lines([
+        assert result.stdout == _join_lines([
             '', '1. next message', '2. test', '3. test2', '',
             '(Delete by choosing entries numbers.)',
-        ]))
+        ])
 
         run('pyhi delete 2 3 5 101')
         result = run('pyhi list')
-        self.assertEqual(result.stdout, _join_lines(
-            ['', '* next message', '']))
+        assert result.stdout == _join_lines(['', '* next message', ''])
 
     def test_delete_in_non_root(self):
         os.makedirs('one/two')
@@ -219,7 +221,7 @@ class TestPyhistory(unittest.TestCase):
             'history_file': None,
             'at_line': None,
         }
-        self.assertEqual(pattern, get_defaults_from_config_file_if_exists())
+        assert pattern == get_defaults_from_config_file_if_exists()
 
     def test_load_config_from_setup_cfg(self):
         _load_fixture('setup.cfg', 'setup.cfg')
@@ -228,7 +230,7 @@ class TestPyhistory(unittest.TestCase):
             'history_file': 'HISTORY.rst',
             'at_line': '42',
         }
-        self.assertEqual(pattern, get_defaults_from_config_file_if_exists())
+        assert pattern == get_defaults_from_config_file_if_exists()
 
     def test_load_config_when_file_doesnt_exist(self):
         pattern = {
@@ -236,8 +238,7 @@ class TestPyhistory(unittest.TestCase):
             'history_file': None,
             'at_line': None,
         }
-        self.assertEqual(
-            pattern, get_defaults_from_config_file_if_exists('!wrong'))
+        assert pattern == get_defaults_from_config_file_if_exists('!wrong')
 
 def _get_test_file_content(name):
     with open(os.path.join(TEST_DIR_PATH, name)) as test_file:

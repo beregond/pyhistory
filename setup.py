@@ -1,13 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import sys
+from setuptools import setup
+from setuptools.command.test import test as TestCommand
 
 from pyhistory import __version__, __author__, __email__
 
+
+PROJECT_NAME = 'pyhistory'
+
+
+class PyTest(TestCommand):
+
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = ['--cov', PROJECT_NAME]
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+        errno = pytest.main(self.pytest_args)
+        sys.exit(errno)
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
@@ -15,7 +35,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 requirements = []
 
 setup(
-    name='pyhistory',
+    name=PROJECT_NAME,
     version=__version__,
     description='Package to help maintaining HISTORY file for Python project.',
     long_description=readme + '\n\n' + history,
@@ -23,10 +43,10 @@ setup(
     author_email=__email__,
     url='https://github.com/beregond/pyhistory',
     packages=[
-        'pyhistory',
+        PROJECT_NAME,
     ],
     package_dir={
-        'pyhistory': 'pyhistory',
+        PROJECT_NAME: PROJECT_NAME,
     },
     include_package_data=True,
     install_requires=requirements,
@@ -49,5 +69,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    test_suite='tests',
+    cmdclass = {
+        'test': PyTest,
+    },
 )
