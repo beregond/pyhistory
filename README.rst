@@ -8,7 +8,7 @@ Python History
 .. image:: https://travis-ci.org/beregond/pyhistory.png?branch=master
         :target: https://travis-ci.org/beregond/pyhistory
 
-.. image:: https://pypip.in/d/pyhistory/badge.png
+.. image:: https://img.shields.io/pypi/dm/pyhistory.svg
         :target: https://pypi.python.org/pypi/pyhistory
 
 
