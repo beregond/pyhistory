@@ -7,11 +7,12 @@ from itertools import count, chain
 from datetime import date
 from hashlib import md5
 
-from .utilities import find_file_across_path
+from .utilities import find_file_across_path, split_into_lines
+
+LINE_PREFIX = '* '
 
 
 def add(args):
-
     history_dir = _select_history_dir(args)
 
     _check_history_dir(history_dir)
@@ -29,8 +30,29 @@ def add(args):
 
 def list_history(args):
     history_dir = _select_history_dir(args)
-    lines = ['* {}'.format(line) for line in _list_history_lines(history_dir)]
+    lines = _list_history_lines(history_dir)
+    lines = [
+        _format_line(LINE_PREFIX, line)
+        for line
+        in lines
+    ]
     print('\n' + ''.join(lines))
+
+
+def _format_line(prefix, content):
+    line_length = 79
+    prefix_length = len(prefix)
+    content = split_into_lines(content, line_length - prefix_length)
+    secondary_prefix = ' ' * prefix_length
+    lines = chain(
+        [_prefix_line(prefix, content[0])],
+        [_prefix_line(secondary_prefix, line) for line in content[1:]]
+    )
+    return '\n'.join(lines)
+
+
+def _prefix_line(prefix, content):
+    return '{}{}'.format(prefix, content)
 
 
 def update(args):
@@ -49,7 +71,10 @@ def update(args):
     result.append('+' * len(header) + '\n\n')
 
     new_lines = [
-        '* {}'.format(line) for line in _list_history_lines(history_dir)]
+        _format_line(LINE_PREFIX, line)
+        for line
+        in _list_history_lines(history_dir)
+    ]
     result += new_lines
     result.append('\n')
 
@@ -146,7 +171,8 @@ def delete(args):
         lines = []
         for entry in files:
             with open(entry[1]) as file_handler:
-                lines.append('{}. {}'.format(entry[0], file_handler.read()))
+                prefix = '{}. '.format(entry[0])
+                lines.append(_format_line(prefix, file_handler.read()))
 
         lines = chain(lines, ['\n', '(Delete by choosing entries numbers.)'])
         print('\n' + ''.join(lines))
