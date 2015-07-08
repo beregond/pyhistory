@@ -359,6 +359,10 @@ class TestUtilities(object):
             ['bbb', 'ccc', 'aaaaaaaaa', 'ddd']
         )
 
+    def test_split_line_with_line_feed_at_the_end(self):
+        expect(split_into_lines('cha cha\n', 6)).Equal(['cha', 'cha\n'])
+        expect(split_into_lines('cha cha\n', 7)).Equal(['cha cha\n'])
+
 
 def _get_test_file_content(name):
     with open(os.path.join(TEST_DIR_PATH, name)) as test_file:
