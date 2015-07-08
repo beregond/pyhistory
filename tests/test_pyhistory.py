@@ -167,6 +167,55 @@ class TestPyhistory(object):
             '\n'
         )
 
+    def test_list_long_line_when_disabled(self):
+        _load_fixture('history1.rst', 'HISTORY.rst')
+
+        run(
+            'pyhi add "some very long and sophisticated message, which is too '
+            'long to fit 79 characters"'
+        )
+
+        result = run('pyhi list --line-length=0')
+        expect(result.stdout).Equal(
+            '\n'
+            '* some very long and sophisticated message, which is too long to '
+            'fit 79 characters\n'
+            '\n'
+        )
+
+    def test_line_length_disabled_when_negative(self):
+        _load_fixture('history1.rst', 'HISTORY.rst')
+
+        run(
+            'pyhi add "some very long and sophisticated message, which is too '
+            'long to fit 79 characters"'
+        )
+
+        result = run('pyhi list --line-length=0')
+        expect(result.stdout).Equal(
+            '\n'
+            '* some very long and sophisticated message, which is too long to '
+            'fit 79 characters\n'
+            '\n'
+        )
+
+    def test_line_length_default_if_not_integer_provided(self):
+        _load_fixture('history1.rst', 'HISTORY.rst')
+
+        run(
+            'pyhi add "some very long and sophisticated message, which is too '
+            'long to fit 79 characters"'
+        )
+
+        result = run('pyhi list --line-length=asdf')
+        expect(result.stdout).Equal(
+            '\n'
+            '* some very long and sophisticated message, which is too long to '
+            'fit 79\n'
+            '  characters\n'
+            '\n'
+        )
+
     def test_pyhistory_when_not_in_history_file_directory(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
@@ -309,6 +358,7 @@ class TestPyhistory(object):
             'history_dir': None,
             'history_file': None,
             'at_line': None,
+            'line_length': None,
         }
         assert pattern == get_defaults_from_config_file_if_exists()
 
@@ -318,6 +368,7 @@ class TestPyhistory(object):
             'history_dir': None,
             'history_file': 'HISTORY.rst',
             'at_line': '42',
+            'line_length': '92',
         }
         assert pattern == get_defaults_from_config_file_if_exists()
 
@@ -326,6 +377,7 @@ class TestPyhistory(object):
             'history_dir': None,
             'history_file': None,
             'at_line': None,
+            'line_length': None,
         }
         assert pattern == get_defaults_from_config_file_if_exists('!wrong')
 

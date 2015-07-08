@@ -15,11 +15,11 @@ def find_file_across_path(dirname, filename):
 
 
 def split_into_lines(text, line_length):
+    if line_length < 1:
+        return [text]
     have_line_feed = text.endswith('\n')
     if have_line_feed:
         text = text.rstrip('\n')
-    if line_length < 1:
-        return [text]
     lines = list(_make_lines_from_words(text.split(' '), line_length))
     if have_line_feed:
         lines[-1] = lines[-1] + '\n'

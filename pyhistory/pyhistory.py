@@ -10,6 +10,7 @@ from hashlib import md5
 from .utilities import find_file_across_path, split_into_lines
 
 LINE_PREFIX = '* '
+DEFAULT_LINE_LENGTH = 79
 
 
 def add(args):
@@ -30,17 +31,24 @@ def add(args):
 
 def list_history(args):
     history_dir = _select_history_dir(args)
+    line_length = _get_line_length(args)
     lines = _list_history_lines(history_dir)
     lines = [
-        _format_line(LINE_PREFIX, line)
+        _format_line(LINE_PREFIX, line, line_length)
         for line
         in lines
     ]
     print('\n' + ''.join(lines))
 
 
-def _format_line(prefix, content):
-    line_length = 79
+def _get_line_length(args):
+    try:
+        return int(args.line_length)
+    except ValueError:
+        return DEFAULT_LINE_LENGTH
+
+
+def _format_line(prefix, content, line_length):
     prefix_length = len(prefix)
     content = split_into_lines(content, line_length - prefix_length)
     secondary_prefix = ' ' * prefix_length
@@ -70,8 +78,9 @@ def update(args):
     result.append(header + '\n')
     result.append('+' * len(header) + '\n\n')
 
+    line_length = _get_line_length(args)
     new_lines = [
-        _format_line(LINE_PREFIX, line)
+        _format_line(LINE_PREFIX, line, line_length)
         for line
         in _list_history_lines(history_dir)
     ]
@@ -168,11 +177,13 @@ def delete(args):
             except KeyError:
                 pass
     else:
+        line_length = _get_line_length(args)
         lines = []
         for entry in files:
             with open(entry[1]) as file_handler:
                 prefix = '{}. '.format(entry[0])
-                lines.append(_format_line(prefix, file_handler.read()))
+                line = _format_line(prefix, file_handler.read(), line_length)
+                lines.append(line)
 
         lines = chain(lines, ['\n', '(Delete by choosing entries numbers.)'])
         print('\n' + ''.join(lines))

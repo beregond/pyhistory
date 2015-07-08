@@ -15,6 +15,7 @@ def get_defaults_from_config_file_if_exists(file_to_check=FILE_TO_CHECK):
         'history_dir',
         'history_file',
         'at_line',
+        'line_length',
     ]
 
     try:
@@ -24,6 +25,7 @@ def get_defaults_from_config_file_if_exists(file_to_check=FILE_TO_CHECK):
 
     config = _get_config_from_file(config_file)
     return {key: config.get_or_default(key) for key in keys}
+
 
 def _get_config_from_file(config_file):
     parser = ConfigParser()

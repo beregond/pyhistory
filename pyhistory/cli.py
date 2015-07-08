@@ -8,6 +8,7 @@ default_values = file_config.get_defaults_from_config_file_if_exists()
 to_override_if_none = {
     'history_dir': 'history',
     'history_file': 'HISTORY.rst',
+    'line_length': pyhistory.DEFAULT_LINE_LENGTH,
 }
 
 for key, value in to_override_if_none.items():
@@ -31,6 +32,8 @@ parser_add.set_defaults(func=pyhistory.add)
 # List.
 parser_list = subparsers.add_parser('list', help="list actual history")
 parser_list.set_defaults(func=pyhistory.list_history)
+parser_list.add_argument(
+    '--line-length', default=default_values['line_length'])
 
 # Update and squash.
 update_parsers = [
@@ -47,6 +50,8 @@ for uparser in update_parsers:
         default=default_values['at_line']
     )
     uparser.set_defaults(func=pyhistory.update)
+    uparser.add_argument(
+        '--line-length', default=default_values['line_length'])
 
 # Clear.
 parser_clear = subparsers.add_parser(
@@ -59,6 +64,8 @@ parser_delete = subparsers.add_parser(
 parser_delete.add_argument(
     'entry', help='Entries to delete', nargs='*')
 parser_delete.set_defaults(func=pyhistory.delete)
+parser_delete.add_argument(
+    '--line-length', default=default_values['line_length'])
 
 
 def main():
