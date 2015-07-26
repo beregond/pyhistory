@@ -13,26 +13,23 @@ LINE_PREFIX = '* '
 DEFAULT_LINE_LENGTH = 79
 
 
-def add(args):
-    history_dir = _select_history_dir(args)
-
+def add(message, history_dir):
+    history_dir = str(history_dir)
     _check_history_dir(history_dir)
     hashed = '{}-{}'.format(
         int(time.time() * 1000),
-        md5(args.message.encode('utf-8')).hexdigest()[:7])
+        md5(message.encode('utf-8')).hexdigest()[:7])
 
     filepath = os.path.join(history_dir, hashed)
     if os.path.exists(filepath):
         raise RuntimeError("Collision, you lucky bastard!")
 
     with open(filepath, 'w') as entry_file:
-        entry_file.write(args.message + '\n')
+        entry_file.write(message + '\n')
 
 
-def list_history(args):
-    history_dir = _select_history_dir(args)
-    line_length = _get_line_length(args)
-    lines = _list_history_lines(history_dir)
+def list_history(history_dir, line_length):
+    lines = _list_history_lines(str(history_dir))
     lines = [
         _format_line(LINE_PREFIX, line, line_length)
         for line
@@ -63,26 +60,23 @@ def _prefix_line(prefix, content):
     return '{}{}'.format(prefix, content)
 
 
-def update(args):
-    history_dir = _select_history_dir(args)
-    history_file = os.path.join(history_dir, '..', args.history_file)
+def update(history_dir, history_file, version, at_line, date_, line_length):
 
-    with open(history_file) as hfile:
+    with open(str(history_file)) as hfile:
         lines = hfile.readlines()
 
-    break_line = _calculate_break_line(args, lines)
+    break_line = _calculate_break_line(lines, at_line)
     result = lines[:break_line]
 
-    release_date = args.date or date.today().strftime('%Y-%m-%d')
-    header = '{} ({})'.format(args.version, release_date)
+    release_date = date_ or date.today().strftime('%Y-%m-%d')
+    header = '{} ({})'.format(version, release_date)
     result.append(header + '\n')
     result.append('+' * len(header) + '\n\n')
 
-    line_length = _get_line_length(args)
     new_lines = [
         _format_line(LINE_PREFIX, line, line_length)
         for line
-        in _list_history_lines(history_dir)
+        in _list_history_lines(str(history_dir))
     ]
     result += new_lines
     result.append('\n')
@@ -91,15 +85,15 @@ def update(args):
 
     result = ''.join(result)
 
-    with open(history_file, 'w') as hfile:
+    with open(str(history_file), 'w') as hfile:
         hfile.write(result)
 
-    _delete_history_dir(history_dir)
+    _delete_history_dir(str(history_dir))
 
 
-def _calculate_break_line(args, lines):
-    if args.at_line:
-        return max(0, int(args.at_line) - 1)
+def _calculate_break_line(lines, at_line):
+    if at_line:
+        return max(0, int(at_line) - 1)
 
     start = 0
     for line in lines:
@@ -110,9 +104,8 @@ def _calculate_break_line(args, lines):
     return start + 3
 
 
-def clear(args):
-    history_dir = _select_history_dir(args)
-    _delete_history_dir(history_dir)
+def clear(history_dir):
+    _delete_history_dir(str(history_dir))
 
 
 def _list_history_files(history_dir):
@@ -162,22 +155,19 @@ def select_dir_with_file(filepath):
         raise RuntimeError('History file not found!', error)
 
 
-def delete(args):
-    history_dir = _select_history_dir(args)
-
-    files = _list_history_files(history_dir)
+def delete(entries, history_dir, line_length):
+    files = _list_history_files(str(history_dir))
     files = zip(_str_count(1), files)
 
-    if args.entry:
+    if entries:
         register = {item[0]: item[1] for item in files}
-        for entry in args.entry:
+        for entry in entries:
             try:
                 file_to_delete = register[entry]
                 os.remove(file_to_delete)
             except KeyError:
                 pass
     else:
-        line_length = _get_line_length(args)
         lines = []
         for entry in files:
             with open(entry[1]) as file_handler:

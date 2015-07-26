@@ -5,7 +5,7 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
-from pyhistory import __version__, __author__, __email__
+from pyhistory import __version__, __author__, __email__, __description__
 
 
 PROJECT_NAME = 'pyhistory'
@@ -32,12 +32,15 @@ class PyTest(TestCommand):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements = []
+requirements = [
+    'click',
+    'pathlib',
+]
 
 setup(
     name=PROJECT_NAME,
     version=__version__,
-    description='Package to help maintaining HISTORY file for Python project.',
+    description=__description__,
     long_description=readme + '\n\n' + history,
     author=__author__,
     author_email=__email__,
@@ -52,8 +55,8 @@ setup(
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            'pyhistory = pyhistory.cli:main',
-            'pyhi = pyhistory.cli:main',
+            'pyhistory = pyhistory.cli:cli',
+            'pyhi = pyhistory.cli:cli',
         ]
     },
     license="BSD",
@@ -69,7 +72,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    cmdclass = {
+    cmdclass={
         'test': PyTest,
     },
 )

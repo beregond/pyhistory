@@ -1,73 +1,80 @@
-import argparse
+from pathlib import Path
 
-from . import __version__ as ver
-from . import pyhistory, file_config
+import click
 
-# Default values.
-default_values = file_config.get_defaults_from_config_file_if_exists()
-to_override_if_none = {
-    'history_dir': 'history',
-    'history_file': 'HISTORY.rst',
-    'line_length': pyhistory.DEFAULT_LINE_LENGTH,
-}
+from . import pyhistory, __description__
 
-for key, value in to_override_if_none.items():
-    default_values[key] = default_values[key] or value
+global_options = {}
 
-# General parser.
-parser = argparse.ArgumentParser(
-    description="Manage Python project history file.")
-parser.add_argument(
-    '--version', action='version', version="Pyhistory ver {}".format(ver))
-parser.add_argument('--history-dir', default=default_values['history_dir'])
-parser.add_argument('--history-file', default=default_values['history_file'])
+line_length = click.option(
+    '--line-length',
+    help='Formatted line length.',
+    default=79,
+    show_default=True,
+)
 
-subparsers = parser.add_subparsers(help="sub-command help")
 
-# Add.
-parser_add = subparsers.add_parser('add', help="add new message")
-parser_add.add_argument('message')
-parser_add.set_defaults(func=pyhistory.add)
+@click.group(help=__description__)
+@click.pass_context
+@click.version_option()
+@click.help_option('-h')
+@click.option('--history-dir', help='History directory location.')
+@click.option('--history-file', help='History file name.')
+def cli(context, history_dir, history_file):
+    history_dir = history_dir or 'history'
+    history_dir = Path.cwd() / history_dir
+    history_file = history_file or 'HISTORY.rst'
+    history_file = history_dir.parent / history_file
+    context.obj = {
+        'history_dir': history_dir,
+        'history_file': history_file,
+    }
 
-# List.
-parser_list = subparsers.add_parser('list', help="list actual history")
-parser_list.set_defaults(func=pyhistory.list_history)
-parser_list.add_argument(
-    '--line-length', default=default_values['line_length'])
 
-# Update and squash.
-update_parsers = [
-    subparsers.add_parser('update', help='update history file'),
-    subparsers.add_parser('squash', help='alias to "update"'),
-]
+@cli.command()
+@click.pass_context
+@click.argument('message')
+def add(context, message):
+    pyhistory.add(message, context.obj['history_dir'])
 
-for uparser in update_parsers:
-    uparser.add_argument('version')
-    uparser.add_argument('--date', help="date of release (by default today)")
-    uparser.add_argument(
-        '--at-line',
-        help="at which line put history in history file",
-        default=default_values['at_line']
+
+@cli.command()
+@click.pass_context
+@line_length
+def list(context, line_length):
+    pyhistory.list_history(context.obj['history_dir'], line_length)
+
+
+@cli.command()
+@click.pass_context
+@click.argument('version')
+@line_length
+@click.option(
+    '--at-line',
+    help='Update file at line. (By default after first headline.)',
+)
+@click.option('--date', help='Date of update.')
+def update(context, version, at_line, date, line_length):
+    pyhistory.update(
+        context.obj['history_dir'],
+        context.obj['history_file'],
+        version,
+        at_line,
+        date,
+        line_length,
     )
-    uparser.set_defaults(func=pyhistory.update)
-    uparser.add_argument(
-        '--line-length', default=default_values['line_length'])
-
-# Clear.
-parser_clear = subparsers.add_parser(
-    'clear', help="remove all entries from history directory")
-parser_clear.set_defaults(func=pyhistory.clear)
-
-# Delete.
-parser_delete = subparsers.add_parser(
-    'delete', help="remove specified entries from history directory")
-parser_delete.add_argument(
-    'entry', help='Entries to delete', nargs='*')
-parser_delete.set_defaults(func=pyhistory.delete)
-parser_delete.add_argument(
-    '--line-length', default=default_values['line_length'])
 
 
-def main():
-    args = parser.parse_args()
-    args.func(args)
+@cli.command()
+@click.pass_context
+def clear(context):
+    pyhistory.clear(context.obj['history_dir'])
+
+
+@cli.command()
+@click.pass_context
+@click.argument('entry', nargs=-1)
+@line_length
+def delete(context, entry, line_length):
+    entries = entry
+    pyhistory.delete(entries, context.obj['history_dir'], line_length)
