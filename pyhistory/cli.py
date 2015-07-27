@@ -75,6 +75,7 @@ def update(context, version, at_line, date, line_length):
 
 @cli.command()
 @click.pass_context
+@click.confirmation_option(prompt="Do you really want to remove all entries?")
 def clear(context):
     pyhistory.clear(context.obj['history_dir'])
 
