@@ -62,7 +62,7 @@ class TestPyhistory(object):
         assert result.stdout == _join_lines(
             ['', '* some_message', '* next message', ''])
 
-        run('pyhi clear')
+        run('pyhi clear --yes')
         result = run('pyhi list')
         assert result.stdout == _join_lines(['', ''])
 

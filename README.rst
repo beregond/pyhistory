@@ -17,19 +17,10 @@ Package to help maintaining HISTORY file for Python project.
 * Free software: BSD license
 * Source: https://github.com/beregond/pyhistory
 
-Note
-----
-
-This package is created to help maintaining history file in environment of high
-concurrency (literally: each pull request on GitHub had conflicts in
-HISTORY.rst file because it was updated before creating PR). Take into account
-it may NOT fit into your environment and/or workflow since it was cutted for
-specific case, but it's good if so. :)
-
 History directory
 -----------------
 
-Pyhistory will traverse directory tree until it finds ``history file`` (by
+PyHistory will traverse directory tree until it finds ``history file`` (by
 default ``HISTORY.rst``, can be changed in ``setup.cfg``, see section ``Config
 file``) and this will be root, where history directory will be created, in
 which all entries will be stored. Thanks to that you can add, list or remove
@@ -87,6 +78,13 @@ Features
   .. code-block:: bash
 
     $ pyhi clear
+    Do you really want to remove all entries? [y/N]: y
+
+  Or without prompt:
+
+  .. code-block:: bash
+
+    $ pyhi clear --yes
 
 * Config file:
 
@@ -96,6 +94,6 @@ Features
   .. code-block:: ini
 
     [pyhistory]
-    history_dir = some_dir # 'history' by default
-    history_file = myhistory.rst # 'HISTORY.rst' by default
-    at_line = 42 # By default history will be injected after first header
+    history_dir = some_dir  # 'history' by default
+    history_file = myhistory.rst  # 'HISTORY.rst' by default
+    at_line = 42  # by default history will be injected after first headline
