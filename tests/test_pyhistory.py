@@ -106,7 +106,7 @@ class TestPyhistory(object):
 
         content = _get_fixture_content('history1_at_line_after2.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        expect(content).Equal(file_content)
+        expect(content).to_be_equal(file_content)
 
     def test_update_with_line_too_long(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -131,7 +131,7 @@ class TestPyhistory(object):
 
         content = _get_fixture_content('history1_update_long_line.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        expect(content).Equal(file_content)
+        expect(content).to_be_equal(file_content)
 
     def test_list_long_line(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -142,7 +142,7 @@ class TestPyhistory(object):
         )
 
         result = run('pyhi list')
-        expect(result.stdout).Equal(
+        expect(result.stdout).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79\n'
@@ -159,7 +159,7 @@ class TestPyhistory(object):
         )
 
         result = run('pyhi list --line-length=0')
-        expect(result.stdout).Equal(
+        expect(result.stdout).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79 characters\n'
@@ -175,7 +175,7 @@ class TestPyhistory(object):
         )
 
         result = run('pyhi list --line-length=0')
-        expect(result.stdout).Equal(
+        expect(result.stdout).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79 characters\n'
@@ -304,7 +304,7 @@ class TestPyhistory(object):
         )
 
         result = run('pyhi delete')
-        expect(result.stdout).Equal(
+        expect(result.stdout).to_be_equal(
             '\n'
             '1. some very long and sophisticated message, which is too long '
             'to fit 79\n'
@@ -362,35 +362,37 @@ class TestPyhistory(object):
 class TestUtilities(object):
 
     def test_split_simple_case(self):
-        expect(split_into_lines('text', 10)).Equal(['text'])
+        expect(split_into_lines('text', 10)).to_be_equal(['text'])
 
     def test_split_empty_string(self):
-        expect(split_into_lines('', 10)).Equal([''])
+        expect(split_into_lines('', 10)).to_be_equal([''])
 
     def test_split_negative_line_length(self):
-        expect(split_into_lines('cha cha cha', -1)).Equal(['cha cha cha'])
+        split = split_into_lines
+        expect(split('cha cha cha', -1)).to_be_equal(['cha cha cha'])
 
     def test_split_zero_line_length(self):
-        expect(split_into_lines('cha cha cha', 0)).Equal(['cha cha cha'])
+        expect(split_into_lines('cha cha cha', 0)).to_be_equal(['cha cha cha'])
 
     def test_split_line(self):
-        expect(split_into_lines('cha cha cha', 1)).Equal(['cha', 'cha', 'cha'])
-        expect(split_into_lines('cha cha cha', 2)).Equal(['cha', 'cha', 'cha'])
-        expect(split_into_lines('cha cha cha', 3)).Equal(['cha', 'cha', 'cha'])
-        expect(split_into_lines('cha cha cha', 6)).Equal(['cha', 'cha', 'cha'])
-        expect(split_into_lines('cha cha cha', 7)).Equal(['cha cha', 'cha'])
+        split = split_into_lines
+        expect(split('cha cha cha', 1)).to_be_equal(['cha', 'cha', 'cha'])
+        expect(split('cha cha cha', 2)).to_be_equal(['cha', 'cha', 'cha'])
+        expect(split('cha cha cha', 3)).to_be_equal(['cha', 'cha', 'cha'])
+        expect(split('cha cha cha', 6)).to_be_equal(['cha', 'cha', 'cha'])
+        expect(split('cha cha cha', 7)).to_be_equal(['cha cha', 'cha'])
 
     def test_split_with_words_too_long(self):
-        expect(split_into_lines('aaaaaaaaa bbb ccc', 4)).Equal(
+        expect(split_into_lines('aaaaaaaaa bbb ccc', 4)).to_be_equal(
             ['aaaaaaaaa', 'bbb', 'ccc']
         )
-        expect(split_into_lines('bbb ccc aaaaaaaaa ddd', 4)).Equal(
+        expect(split_into_lines('bbb ccc aaaaaaaaa ddd', 4)).to_be_equal(
             ['bbb', 'ccc', 'aaaaaaaaa', 'ddd']
         )
 
     def test_split_line_with_line_feed_at_the_end(self):
-        expect(split_into_lines('cha cha\n', 6)).Equal(['cha', 'cha\n'])
-        expect(split_into_lines('cha cha\n', 7)).Equal(['cha cha\n'])
+        expect(split_into_lines('cha cha\n', 6)).to_be_equal(['cha', 'cha\n'])
+        expect(split_into_lines('cha cha\n', 7)).to_be_equal(['cha cha\n'])
 
 
 def _get_test_file_content(name):
