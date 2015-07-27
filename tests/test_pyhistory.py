@@ -4,6 +4,7 @@ import shutil
 
 import pytest
 from invoke import run as original_run
+from invoke.exceptions import Failure
 from verify import expect
 
 from pyhistory.pyhistory import select_dir_with_file
@@ -66,34 +67,22 @@ class TestPyhistory(object):
         assert result.stdout == _join_lines(['', ''])
 
     def test_update(self):
-        self._test_update('update')
-
-    def test_squash(self):
-        self._test_update('squash')
-
-    def _test_update(self, command):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
-        run('pyhi {} 1.0.6 --date today'.format(command))
+        run('pyhi update 1.0.6 --date today')
 
         content = _get_fixture_content('history1_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         assert content == file_content
 
     def test_update_at_line(self):
-        self._test_update_at_line('update')
-
-    def test_squash_at_line(self):
-        self._test_update_at_line('squash')
-
-    def _test_update_at_line(self, command):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
-        run('pyhi {} 1.0.6 --date today --at-line 1'.format(command))
+        run('pyhi update 1.0.6 --date today --at-line 1')
 
         content = _get_fixture_content('history1_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
@@ -103,7 +92,7 @@ class TestPyhistory(object):
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
-        run('pyhi {} 1.0.6 --date today --at-line 0'.format(command))
+        run('pyhi update 1.0.6 --date today --at-line 0')
 
         content = _get_fixture_content('history1_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
@@ -113,19 +102,13 @@ class TestPyhistory(object):
         run('pyhi add some_message')
         _sleep()
         run('pyhi add "next message"')
-        run('pyhi {} 1.0.6 --date today --at-line 7'.format(command))
+        run('pyhi update 1.0.6 --date today --at-line 7')
 
         content = _get_fixture_content('history1_at_line_after2.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).Equal(file_content)
 
-    def test_update_long_line(self):
-        self._test_update_with_line_too_long('update')
-
-    def test_squash_long_line(self):
-        self._test_update_with_line_too_long('squash')
-
-    def _test_update_with_line_too_long(self, command):
+    def test_update_with_line_too_long(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(
             'pyhi add "some very long and sophisticated message, which is too '
@@ -144,7 +127,7 @@ class TestPyhistory(object):
             'exercitation ullamco"'
         )
 
-        run('pyhi {} 1.0.6 --date today'.format(command))
+        run('pyhi update 1.0.6 --date today')
 
         content = _get_fixture_content('history1_update_long_line.rst')
         file_content = _get_test_file_content('HISTORY.rst')
@@ -207,14 +190,8 @@ class TestPyhistory(object):
             'long to fit 79 characters"'
         )
 
-        result = run('pyhi list --line-length=asdf')
-        expect(result.stdout).Equal(
-            '\n'
-            '* some very long and sophisticated message, which is too long to '
-            'fit 79\n'
-            '  characters\n'
-            '\n'
-        )
+        with pytest.raises(Failure):
+            run('pyhi list --line-length=asdf')
 
     def test_pyhistory_when_not_in_history_file_directory(self):
         _load_fixture('history1.rst', 'HISTORY.rst')

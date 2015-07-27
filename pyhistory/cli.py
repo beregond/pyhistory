@@ -18,13 +18,21 @@ line_length = click.option(
 @click.pass_context
 @click.version_option()
 @click.help_option('-h')
-@click.option('--history-dir', help='History directory location.')
-@click.option('--history-file', help='History file name.')
+@click.option(
+    '--history-dir',
+    help='History directory location.',
+    default='history',
+    show_default=True,
+)
+@click.option(
+    '--history-file',
+    help='History file name.',
+    default='HISTORY.rst',
+    show_default=True,
+)
 def cli(context, history_dir, history_file):
-    history_dir = history_dir or 'history'
-    history_dir = Path.cwd() / history_dir
-    history_file = history_file or 'HISTORY.rst'
-    history_file = history_dir.parent / history_file
+    history_file = _find_across_path(Path.cwd(),  history_file)
+    history_dir = history_file.parent / history_dir
     context.obj = {
         'history_dir': history_dir,
         'history_file': history_file,
@@ -78,3 +86,14 @@ def clear(context):
 def delete(context, entry, line_length):
     entries = entry
     pyhistory.delete(entries, context.obj['history_dir'], line_length)
+
+
+def _find_across_path(dir, file):
+    wanted = dir / file
+    while not wanted.exists() and wanted.parent != wanted.parent.parent:
+        wanted = wanted.parent.parent / wanted.name
+
+    if not wanted.exists():
+        raise RuntimeError('History file not found!', file)
+
+    return wanted
