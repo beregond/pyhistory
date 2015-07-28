@@ -2,13 +2,13 @@ import os
 import time
 import shutil
 
-import pytest
 from invoke import run as original_run
-from invoke.exceptions import Failure
 from verify import expect
+from click.testing import CliRunner
 
 from pyhistory.file_config import get_defaults_from_config_file_if_exists
 from pyhistory.utilities import split_into_lines
+from pyhistory.cli import main
 
 FIXTURES_DIR_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
@@ -17,9 +17,15 @@ FIXTURES_DIR_PATH = os.path.join(
 TEST_DIR = 'test_dir'
 TEST_DIR_PATH = os.path.join(os.getcwd(), TEST_DIR)
 
+runner = CliRunner()
+
+
+def run_old(command):
+    return original_run(command, hide=True)
+
 
 def run(command):
-    return original_run(command, hide=True)
+    return runner.invoke(main, command)
 
 
 def _list_dir_without_dotfiles(path):
@@ -44,64 +50,67 @@ class TestPyhistory(object):
 
     def test_list_empty(self):
         open('HISTORY.rst', 'w').close()
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(['', ''])
+        result = run(['list'])
+        expect(result.output).to_be_equal(_join_lines(['', '']))
 
     def test_add_list_and_clear(self):
         open('HISTORY.rst', 'w').close()
 
-        run('pyhi add some_message')
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(['', '* some_message', ''])
+        run(['add', 'some_message'])
+        result = run(['list'])
+        expect(result.output).to_be_equal(
+            _join_lines(['', '* some_message', ''])
+        )
 
         _sleep()
 
-        run('pyhi add "next message"')
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(
-            ['', '* some_message', '* next message', ''])
+        run(['add', 'next message'])
+        result = run(['list'])
+        expect(result.output).to_be_equal(
+            _join_lines(['', '* some_message', '* next message', ''])
+        )
 
-        run('pyhi clear --yes')
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(['', ''])
+        run(['clear', '--yes'])
+        result = run(['list'])
+        expect(result.output).to_be_equal(_join_lines(['', '']))
 
     def test_update(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
-        run('pyhi update 1.0.6 --date today')
+        run(['add', 'next message'])
+        run(['update', '1.0.6', '--date', 'today'])
 
         content = _get_fixture_content('history1_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        assert content == file_content
+        expect(content).to_be_equal(file_content)
 
     def test_update_at_line(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
-        run('pyhi update 1.0.6 --date today --at-line 1')
+        run(['add', 'next message'])
+        run(['update', '1.0.6', '--date', 'today', '--at-line', '1'])
 
         content = _get_fixture_content('history1_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        assert content == file_content
+        expect(content).to_be_equal(file_content)
 
         _load_fixture('history1.rst', 'HISTORY.rst')
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
-        run('pyhi update 1.0.6 --date today --at-line 0')
+        run(['add', 'next message'])
+        run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
 
         content = _get_fixture_content('history1_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        assert content == file_content
+        expect(content).to_be_equal(file_content)
 
         _load_fixture('history1.rst', 'HISTORY.rst')
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
-        run('pyhi update 1.0.6 --date today --at-line 7')
+        run(['add', 'next message'])
+        run(['update', '1.0.6', '--date', 'today', '--at-line', '7'])
 
         content = _get_fixture_content('history1_at_line_after2.rst')
         file_content = _get_test_file_content('HISTORY.rst')
@@ -109,24 +118,24 @@ class TestPyhistory(object):
 
     def test_update_with_line_too_long(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
+        run([
+            'add', 'some very long and sophisticated message, which is too '
+            'long to fit 79 characters'
+        ])
         _sleep()
-        run(
-            'pyhi add "next message, which also is very long, but should fit '
-            'into 79 characters aaaa"'
-        )
+        run([
+            'add', 'next message, which also is very long, but should fit '
+            'into 79 characters aaaa'
+        ])
         _sleep()
-        run(
-            'pyhi add "let just say Lorem ipsum dolor sit amet consectetur '
+        run([
+            'add', 'let just say Lorem ipsum dolor sit amet consectetur '
             'adipisicing elit, sed do eiusmod tempor incididunt ut labore et '
             'dolore magna aliqua. Ut enim ad minim veniam, quis nostrud '
-            'exercitation ullamco"'
-        )
+            'exercitation ullamco'
+        ])
 
-        run('pyhi update 1.0.6 --date today')
+        run(['update', '1.0.6', '--date', 'today'])
 
         content = _get_fixture_content('history1_update_long_line.rst')
         file_content = _get_test_file_content('HISTORY.rst')
@@ -135,13 +144,13 @@ class TestPyhistory(object):
     def test_list_long_line(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
+        run([
+            'add', 'some very long and sophisticated message, which is too '
+            'long to fit 79 characters'
+        ])
 
-        result = run('pyhi list')
-        expect(result.stdout).to_be_equal(
+        result = run(['list'])
+        expect(result.output).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79\n'
@@ -152,13 +161,13 @@ class TestPyhistory(object):
     def test_list_long_line_when_disabled(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
+        run([
+            'add', 'some very long and sophisticated message, which is too '
+            'long to fit 79 characters'
+        ])
 
-        result = run('pyhi list --line-length=0')
-        expect(result.stdout).to_be_equal(
+        result = run(['list', '--line-length', '0'])
+        expect(result.output).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79 characters\n'
@@ -168,29 +177,18 @@ class TestPyhistory(object):
     def test_line_length_disabled_when_negative(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
+        run([
+            'add', 'some very long and sophisticated message, which is too '
+            'long to fit 79 characters'
+        ])
 
-        result = run('pyhi list --line-length=0')
-        expect(result.stdout).to_be_equal(
+        result = run(['list', '--line-length', '0'])
+        expect(result.output).to_be_equal(
             '\n'
             '* some very long and sophisticated message, which is too long to '
             'fit 79 characters\n'
             '\n'
         )
-
-    def test_line_length_default_if_not_integer_provided(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
-
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
-
-        with pytest.raises(Failure):
-            run('pyhi list --line-length=asdf')
 
     def test_pyhistory_when_not_in_history_file_directory(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
@@ -199,94 +197,101 @@ class TestPyhistory(object):
         os.makedirs('one/two')
         os.chdir('one/two')
 
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
+        run(['add', 'next message'])
         _sleep()
 
-        assert 0 == len(_list_dir_without_dotfiles(os.getcwd()))
+        expect(len(_list_dir_without_dotfiles(os.getcwd()))).to_be_equal(0)
 
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(
+        result = run(['list'])
+        expect(result.output).to_be_equal(_join_lines(
             ['', '* some_message', '* next message', ''])
+        )
 
         os.chdir(original_working_dir)
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(
+        result = run(['list'])
+        expect(result.output).to_be_equal(_join_lines(
             ['', '* some_message', '* next message', ''])
+        )
 
         os.chdir('one/two')
-        run('pyhi update 1.0.6 --date today')
+        run(['update', '1.0.6', '--date', 'today'])
         os.chdir(original_working_dir)
 
         content = _get_fixture_content('history1_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
-        assert content == file_content
+        expect(content).to_be_equal(file_content)
 
     def test_delete(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
-        run('pyhi add some_message')
+        run(['add', 'some_message'])
         _sleep()
-        run('pyhi add "next message"')
+        run(['add', 'next message'])
         _sleep()
 
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(
+        result = run(['list'])
+        expect(result.output).to_be_equal(_join_lines(
             ['', '* some_message', '* next message', ''])
+        )
 
-        result = run('pyhi delete')
-        assert result.stdout == _join_lines([
+        result = run(['delete'])
+        expect(result.output).to_be_equal(_join_lines([
             '', '1. some_message', '2. next message', '',
             '(Delete by choosing entries numbers.)',
-        ])
+        ]))
 
-        run('pyhi delete 1')
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(['', '* next message', ''])
+        run(['delete', '1'])
+        result = run(['list'])
+        expect(result.output).to_be_equal(
+            _join_lines(['', '* next message', ''])
+        )
 
-        run('pyhi add test')
+        run(['add', 'test'])
         _sleep()
-        run('pyhi add test2')
+        run(['add', 'test2'])
 
-        result = run('pyhi delete')
-        assert result.stdout == _join_lines([
+        result = run(['delete'])
+        expect(result.output).to_be_equal(_join_lines([
             '', '1. next message', '2. test', '3. test2', '',
             '(Delete by choosing entries numbers.)',
-        ])
+        ]))
 
-        run('pyhi delete 10')
-        result = run('pyhi delete')
-        assert result.stdout == _join_lines([
+        run(['delete', '10'])
+        result = run(['delete'])
+        expect(result.output).to_be_equal(_join_lines([
             '', '1. next message', '2. test', '3. test2', '',
             '(Delete by choosing entries numbers.)',
-        ])
+        ]))
 
-        run('pyhi delete 2 3 5 101')
-        result = run('pyhi list')
-        assert result.stdout == _join_lines(['', '* next message', ''])
+        run(['delete', '2', '3', '5', '101'])
+        result = run(['list'])
+        expect(result.output).to_be_equal(
+            _join_lines(['', '* next message', ''])
+        )
 
     def test_delete_long_lines(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
-        run(
-            'pyhi add "some very long and sophisticated message, which is too '
-            'long to fit 79 characters"'
-        )
+        run([
+            'add', 'some very long and sophisticated message, which is too '
+            'long to fit 79 characters'
+        ])
         _sleep()
         messages = [
             'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
         ]
         for message in messages:
-            run('pyhi add {}'.format(message))
+            run(['add', message])
             _sleep()
-        run(
-            'pyhi add "next message, which also is very long, and should not '
-            'fit into 79 characters"'
-        )
+        run([
+            'add', 'next message, which also is very long, and should not '
+            'fit into 79 characters'
+        ])
 
-        result = run('pyhi delete')
-        expect(result.stdout).to_be_equal(
+        result = run(['delete'])
+        expect(result.output).to_be_equal(
             '\n'
             '1. some very long and sophisticated message, which is too long '
             'to fit 79\n'
@@ -319,7 +324,7 @@ class TestPyhistory(object):
             'at_line': None,
             'line_length': None,
         }
-        assert pattern == get_defaults_from_config_file_if_exists()
+        expect(pattern).to_be_equal(get_defaults_from_config_file_if_exists())
 
     def test_load_config_from_setup_cfg(self):
         _load_fixture('setup.cfg', 'setup.cfg')
@@ -329,7 +334,7 @@ class TestPyhistory(object):
             'at_line': '42',
             'line_length': '92',
         }
-        assert pattern == get_defaults_from_config_file_if_exists()
+        expect(pattern).to_be_equal(get_defaults_from_config_file_if_exists())
 
     def test_load_config_when_file_doesnt_exist(self):
         pattern = {
@@ -338,7 +343,9 @@ class TestPyhistory(object):
             'at_line': None,
             'line_length': None,
         }
-        assert pattern == get_defaults_from_config_file_if_exists('!wrong')
+        expect(pattern).to_be_equal(
+            get_defaults_from_config_file_if_exists('!wrong')
+        )
 
 
 class TestUtilities(object):

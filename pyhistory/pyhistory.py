@@ -111,10 +111,9 @@ def clear(history_dir):
 
 
 def _list_history_lines(history_dir):
-    if history_dir.exists():
-        return [_read(file) for file in sorted(history_dir.iterdir())]
-    else:
+    if not history_dir.exists():
         return []
+    return [_read(file) for file in sorted(history_dir.iterdir())]
 
 
 def _read(src):
@@ -149,7 +148,6 @@ def delete(entries, history_dir, line_length):
 
 
 def _list_history_files(history_dir):
-    if history_dir.exists():
-        return sorted(history_dir.iterdir())
-    else:
+    if not history_dir.exists():
         return []
+    return sorted(history_dir.iterdir())

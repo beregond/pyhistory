@@ -47,9 +47,6 @@ class _LineBuffer(object):
         self.line = ''
         self.length = 0
 
-    def __str__(self):
-        return self.line
-
     def __len__(self):
         return self.length
 
