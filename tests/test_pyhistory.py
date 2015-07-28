@@ -2,7 +2,6 @@ import os
 import time
 import shutil
 
-from invoke import run as original_run
 from verify import expect
 from click.testing import CliRunner
 
@@ -18,10 +17,6 @@ TEST_DIR = 'test_dir'
 TEST_DIR_PATH = os.path.join(os.getcwd(), TEST_DIR)
 
 runner = CliRunner()
-
-
-def run_old(command):
-    return original_run(command, hide=True)
 
 
 def run(command):
