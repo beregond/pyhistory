@@ -55,8 +55,8 @@ setup(
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            'pyhistory = pyhistory.cli:cli',
-            'pyhi = pyhistory.cli:cli',
+            'pyhistory = pyhistory.cli:main',
+            'pyhi = pyhistory.cli:main',
         ]
     },
     license="BSD",

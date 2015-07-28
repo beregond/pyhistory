@@ -7,7 +7,6 @@ from invoke import run as original_run
 from invoke.exceptions import Failure
 from verify import expect
 
-from pyhistory.pyhistory import select_dir_with_file
 from pyhistory.file_config import get_defaults_from_config_file_if_exists
 from pyhistory.utilities import split_into_lines
 
@@ -223,23 +222,6 @@ class TestPyhistory(object):
         content = _get_fixture_content('history1_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         assert content == file_content
-
-    def test_select_dir_with_file(self):
-        os.makedirs('one/two')
-        os.chdir('one')
-        proper_dir = os.getcwd()
-        open('some_file.rst', 'w').close()
-        os.chdir('two')
-
-        selected_dir = select_dir_with_file(
-            os.path.join(os.getcwd(), 'some_file.rst'))
-
-        assert proper_dir == selected_dir
-
-    def test_select_dir_with_fails_when_not_found(self):
-
-        with pytest.raises(RuntimeError):
-            select_dir_with_file('/!hope_this_does_not_exist')
 
     def test_delete(self):
         _load_fixture('history1.rst', 'HISTORY.rst')

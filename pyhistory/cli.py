@@ -30,7 +30,7 @@ line_length = click.option(
     default='HISTORY.rst',
     show_default=True,
 )
-def cli(context, history_dir, history_file):
+def main(context, history_dir, history_file):
     history_file = _find_across_path(Path.cwd(),  history_file)
     history_dir = history_file.parent / history_dir
     context.obj = {
@@ -39,21 +39,21 @@ def cli(context, history_dir, history_file):
     }
 
 
-@cli.command()
+@main.command()
 @click.pass_context
 @click.argument('message')
 def add(context, message):
     pyhistory.add(message, context.obj['history_dir'])
 
 
-@cli.command()
+@main.command()
 @click.pass_context
 @line_length
 def list(context, line_length):
     pyhistory.list_history(context.obj['history_dir'], line_length)
 
 
-@cli.command()
+@main.command()
 @click.pass_context
 @click.argument('version')
 @line_length
@@ -73,16 +73,16 @@ def update(context, version, at_line, date, line_length):
     )
 
 
-@cli.command()
+@main.command()
 @click.pass_context
 @click.confirmation_option(prompt="Do you really want to remove all entries?")
 def clear(context):
     pyhistory.clear(context.obj['history_dir'])
 
 
-@cli.command()
+@main.command()
 @click.pass_context
-@click.argument('entry', nargs=-1)
+@click.argument('entry', nargs=-1, type=int)
 @line_length
 def delete(context, entry, line_length):
     entries = entry
