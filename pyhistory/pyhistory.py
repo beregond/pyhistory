@@ -24,7 +24,7 @@ def add(message, history_dir):
 
 def _make_hash_name(message):
     return '{}-{}'.format(
-        int(time.time() * 1000),
+        int(time.time() * 10 ** 6),
         md5(message.encode('utf-8')).hexdigest()[:7],
     )
 

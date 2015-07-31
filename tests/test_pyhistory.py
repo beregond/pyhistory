@@ -1,5 +1,4 @@
 import os
-import time
 import shutil
 
 from verify import expect
@@ -56,9 +55,6 @@ class TestPyhistory(object):
         expect(result.output).to_be_equal(
             _join_lines(['', '* some_message', ''])
         )
-
-        _sleep()
-
         run(['add', 'next message'])
         result = run(['list'])
         expect(result.output).to_be_equal(
@@ -72,7 +68,6 @@ class TestPyhistory(object):
     def test_update(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today'])
 
@@ -83,7 +78,6 @@ class TestPyhistory(object):
     def test_update_with_special_headlines(self):
         _load_fixture('history_special.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today'])
 
@@ -94,7 +88,6 @@ class TestPyhistory(object):
     def test_update_at_line(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '1'])
 
@@ -104,7 +97,6 @@ class TestPyhistory(object):
 
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
 
@@ -114,7 +106,6 @@ class TestPyhistory(object):
 
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '7'])
 
@@ -128,12 +119,10 @@ class TestPyhistory(object):
             'add', 'some very long and sophisticated message, which is too '
             'long to fit 79 characters'
         ])
-        _sleep()
         run([
             'add', 'next message, which also is very long, but should fit '
             'into 79 characters aaaa'
         ])
-        _sleep()
         run([
             'add', 'let just say Lorem ipsum dolor sit amet consectetur '
             'adipisicing elit, sed do eiusmod tempor incididunt ut labore et '
@@ -204,9 +193,7 @@ class TestPyhistory(object):
         os.chdir('one/two')
 
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
-        _sleep()
 
         expect(len(_list_dir_without_dotfiles(os.getcwd()))).to_be_equal(0)
 
@@ -233,9 +220,7 @@ class TestPyhistory(object):
         _load_fixture('history1.rst', 'HISTORY.rst')
 
         run(['add', 'some_message'])
-        _sleep()
         run(['add', 'next message'])
-        _sleep()
 
         result = run(['list'])
         expect(result.output).to_be_equal(_join_lines(
@@ -255,7 +240,6 @@ class TestPyhistory(object):
         )
 
         run(['add', 'test'])
-        _sleep()
         run(['add', 'test2'])
 
         result = run(['delete'])
@@ -284,13 +268,11 @@ class TestPyhistory(object):
             'add', 'some very long and sophisticated message, which is too '
             'long to fit 79 characters'
         ])
-        _sleep()
         messages = [
             'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
         ]
         for message in messages:
             run(['add', message])
-            _sleep()
         run([
             'add', 'next message, which also is very long, and should not '
             'fit into 79 characters'
@@ -408,7 +390,3 @@ def _load_fixture(fixture_name, destination):
 
 def _join_lines(output):
     return '\n'.join(output) + '\n'
-
-
-def _sleep():
-    time.sleep(0.001)
