@@ -66,12 +66,12 @@ class TestPyhistory(object):
         expect(result.output).to_be_equal(_join_lines(['', '']))
 
     def test_update(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today'])
 
-        content = _get_fixture_content('history1_after.rst')
+        content = _get_fixture_content('history_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
@@ -86,35 +86,35 @@ class TestPyhistory(object):
         expect(content).to_be_equal(file_content)
 
     def test_update_at_line(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '1'])
 
-        content = _get_fixture_content('history1_at_line_after.rst')
+        content = _get_fixture_content('history_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
 
-        content = _get_fixture_content('history1_at_line_after.rst')
+        content = _get_fixture_content('history_at_line_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '7'])
 
-        content = _get_fixture_content('history1_at_line_after2.rst')
+        content = _get_fixture_content('history_at_line_after2.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_update_with_line_too_long(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
         run([
             'add', 'some very long and sophisticated message, which is too '
             'long to fit 79 characters'
@@ -132,12 +132,12 @@ class TestPyhistory(object):
 
         run(['update', '1.0.6', '--date', 'today'])
 
-        content = _get_fixture_content('history1_update_long_line.rst')
+        content = _get_fixture_content('history_update_long_line.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_list_long_line(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -154,7 +154,7 @@ class TestPyhistory(object):
         )
 
     def test_list_long_line_when_disabled(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -170,7 +170,7 @@ class TestPyhistory(object):
         )
 
     def test_line_length_disabled_when_negative(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -186,7 +186,7 @@ class TestPyhistory(object):
         )
 
     def test_pyhistory_when_not_in_history_file_directory(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         original_working_dir = os.getcwd()
         os.makedirs('one/two')
@@ -212,12 +212,12 @@ class TestPyhistory(object):
         run(['update', '1.0.6', '--date', 'today'])
         os.chdir(original_working_dir)
 
-        content = _get_fixture_content('history1_after.rst')
+        content = _get_fixture_content('history_after.rst')
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_delete(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         run(['add', 'some_message'])
         run(['add', 'next message'])
@@ -262,7 +262,7 @@ class TestPyhistory(object):
         )
 
     def test_delete_long_lines(self):
-        _load_fixture('history1.rst', 'HISTORY.rst')
+        _load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
