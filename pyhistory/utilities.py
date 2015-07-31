@@ -1,17 +1,3 @@
-import os
-
-
-def find_file_across_path(dirname, filename):
-    filepath = os.path.join(dirname, filename)
-    if os.path.exists(filepath):
-        return filepath
-
-    new_dirname = os.path.abspath(os.path.join(dirname, '..'))
-
-    if dirname == new_dirname:
-        raise RuntimeError('File not found!', filename)
-
-    return find_file_across_path(new_dirname, filename)
 
 
 def split_into_lines(text, line_length):
@@ -67,3 +53,14 @@ class _LineBuffer(object):
         value = self.line
         self.__init__()
         return value
+
+
+def find_file_across_parents(directory, file):
+    wanted = directory / file
+    while not wanted.exists() and wanted.parent != wanted.parent.parent:
+        wanted = wanted.parent.parent / wanted.name
+
+    if not wanted.exists():
+        raise RuntimeError('History file not found!', file)
+
+    return wanted

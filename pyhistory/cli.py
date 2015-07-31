@@ -3,6 +3,7 @@ from pathlib import Path
 import click
 
 from . import pyhistory, __description__
+from .utilities import find_file_across_parents
 
 global_options = {}
 
@@ -31,7 +32,7 @@ line_length = click.option(
     show_default=True,
 )
 def main(context, history_dir, history_file):
-    history_file = _find_across_path(Path.cwd(),  history_file)
+    history_file = find_file_across_parents(Path.cwd(),  history_file)
     history_dir = history_file.parent / history_dir
     context.obj = {
         'history_dir': history_dir,
@@ -87,14 +88,3 @@ def clear(context):
 def delete(context, entry, line_length):
     entries = entry
     pyhistory.delete(entries, context.obj['history_dir'], line_length)
-
-
-def _find_across_path(dir, file):
-    wanted = dir / file
-    while not wanted.exists() and wanted.parent != wanted.parent.parent:
-        wanted = wanted.parent.parent / wanted.name
-
-    if not wanted.exists():
-        raise RuntimeError('History file not found!', file)
-
-    return wanted
