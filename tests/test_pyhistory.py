@@ -80,6 +80,17 @@ class TestPyhistory(object):
         file_content = _get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
+    def test_update_with_special_headlines(self):
+        _load_fixture('history_special.rst', 'HISTORY.rst')
+        run(['add', 'some_message'])
+        _sleep()
+        run(['add', 'next message'])
+        run(['update', '1.0.6', '--date', 'today'])
+
+        content = _get_fixture_content('history_special_after.rst')
+        file_content = _get_test_file_content('HISTORY.rst')
+        expect(content).to_be_equal(file_content)
+
     def test_update_at_line(self):
         _load_fixture('history1.rst', 'HISTORY.rst')
         run(['add', 'some_message'])

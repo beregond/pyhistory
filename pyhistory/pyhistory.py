@@ -18,8 +18,6 @@ def add(message, history_dir):
     message = unicode(message)
     hashed = _make_hash_name(message)
     filepath = history_dir / hashed
-    if filepath.exists():
-        raise RuntimeError("Collision, you lucky bastard!")
     with filepath.open('w') as file:
         file.write(message + '\n')
 
@@ -104,18 +102,17 @@ def _calculate_break_line(lines, at_line):
 
 
 def clear(history_dir):
-    for file in history_dir.iterdir():
-        if file.is_dir():
-            clear(file)
-            file.rmdir()
-        else:
-            file.unlink()
+    [file.unlink() for file in history_dir.iterdir()]
 
 
 def _list_history_lines(history_dir):
-    if not history_dir.exists():
-        return []
-    return [_read(file) for file in sorted(history_dir.iterdir())]
+    return [_read(file) for file in _list_history_files(history_dir)]
+
+
+def _list_history_files(history_dir):
+    if history_dir.exists():
+        return sorted(history_dir.iterdir())
+    return []
 
 
 def _read(src):
@@ -129,8 +126,7 @@ def _readlines(src):
 
 
 def delete(entries, history_dir, line_length):
-    files = _list_history_files(history_dir)
-    files = dict(zip(count(1), files))
+    files = dict(zip(count(1), _list_history_files(history_dir)))
 
     if entries:
         for entry in entries:
@@ -147,9 +143,3 @@ def delete(entries, history_dir, line_length):
 
         lines = chain(lines, ['\n', '(Delete by choosing entries numbers.)'])
         print('\n' + ''.join(lines))
-
-
-def _list_history_files(history_dir):
-    if not history_dir.exists():
-        return []
-    return sorted(history_dir.iterdir())
