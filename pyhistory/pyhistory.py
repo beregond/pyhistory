@@ -5,6 +5,8 @@ from itertools import count, chain
 from datetime import date
 from hashlib import md5
 
+from six import text_type as unicode
+
 from .utilities import split_into_lines
 
 LINE_PREFIX = '* '
@@ -13,7 +15,7 @@ DEFAULT_LINE_LENGTH = 79
 
 def add(message, history_dir):
     _check_history_dir(history_dir)
-    message = message.decode('utf-8')
+    message = unicode(message)
     hashed = _make_hash_name(message)
     filepath = history_dir / hashed
     if filepath.exists():
@@ -25,7 +27,7 @@ def add(message, history_dir):
 def _make_hash_name(message):
     return '{}-{}'.format(
         int(time.time() * 1000),
-        md5(message).hexdigest()[:7],
+        md5(message.encode('utf-8')).hexdigest()[:7],
     )
 
 

@@ -35,6 +35,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 requirements = [
     'click',
     'pathlib',
+    'six',
 ]
 
 setup(
