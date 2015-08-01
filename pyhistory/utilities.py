@@ -1,3 +1,4 @@
+from itertools import chain
 
 
 def split_into_lines(text, line_length):
@@ -64,3 +65,18 @@ def find_file_across_parents(directory, file):
         raise RuntimeError('History file not found!', file)
 
     return wanted
+
+
+def format_line(prefix, content, line_length):
+    prefix_length = len(prefix)
+    content = split_into_lines(content, line_length - prefix_length)
+    secondary_prefix = ' ' * prefix_length
+    lines = chain(
+        [_prefix_line(prefix, content[0])],
+        [_prefix_line(secondary_prefix, line) for line in content[1:]]
+    )
+    return '\n'.join(lines)
+
+
+def _prefix_line(prefix, content):
+    return '{}{}'.format(prefix, content)

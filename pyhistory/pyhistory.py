@@ -1,16 +1,13 @@
-from __future__ import print_function
-
 import time
-from itertools import count, chain
+from itertools import count
 from datetime import date
 from hashlib import md5
 
 from six import text_type as unicode
 
-from .utilities import split_into_lines
+from .utilities import format_line
 
 LINE_PREFIX = '* '
-DEFAULT_LINE_LENGTH = 79
 
 
 def add(message, history_dir):
@@ -34,32 +31,13 @@ def _check_history_dir(history_dir):
         history_dir.mkdir()
 
 
-def list_history(history_dir, line_length):
-    lines = _list_history_lines(history_dir)
-    lines = [
-        _format_line(LINE_PREFIX, line, line_length)
-        for line
-        in lines
-    ]
-    print('\n' + ''.join(lines))
+def list_history(history_dir):
+    return [_read(file) for file in _list_history_files(history_dir)]
 
 
-def _format_line(prefix, content, line_length):
-    prefix_length = len(prefix)
-    content = split_into_lines(content, line_length - prefix_length)
-    secondary_prefix = ' ' * prefix_length
-    lines = chain(
-        [_prefix_line(prefix, content[0])],
-        [_prefix_line(secondary_prefix, line) for line in content[1:]]
-    )
-    return '\n'.join(lines)
-
-
-def _prefix_line(prefix, content):
-    return '{}{}'.format(prefix, content)
-
-
-def update(history_dir, history_file, version, at_line, date_, line_length):
+def update(
+        history_dir, history_file, version, at_line, date_, line_length,
+        prefix):
     lines = _readlines(history_file)
 
     break_line = _calculate_break_line(lines, at_line)
@@ -71,15 +49,13 @@ def update(history_dir, history_file, version, at_line, date_, line_length):
     result.append('+' * len(header) + '\n\n')
 
     new_lines = [
-        _format_line(LINE_PREFIX, line, line_length)
+        format_line(prefix, line, line_length)
         for line
-        in _list_history_lines(history_dir)
+        in list_history(history_dir)
     ]
     result += new_lines
     result.append('\n')
-
     result += lines[break_line:]
-
     result = ''.join(result)
 
     with history_file.open('w') as file:
@@ -105,10 +81,6 @@ def clear(history_dir):
     [file.unlink() for file in history_dir.iterdir()]
 
 
-def _list_history_lines(history_dir):
-    return [_read(file) for file in _list_history_files(history_dir)]
-
-
 def _list_history_files(history_dir):
     if history_dir.exists():
         return sorted(history_dir.iterdir())
@@ -125,21 +97,14 @@ def _readlines(src):
         return file.readlines()
 
 
-def delete(entries, history_dir, line_length):
-    files = dict(zip(count(1), _list_history_files(history_dir)))
+def delete(entries, history_dir):
+    files = list_for_delete(history_dir)
+    for entry in entries:
+        try:
+            files[entry].unlink()
+        except KeyError:
+            pass
 
-    if entries:
-        for entry in entries:
-            try:
-                files[entry].unlink()
-            except KeyError:
-                pass
-    else:
-        lines = []
-        for number, file in files.items():
-            prefix = '{}. '.format(number)
-            line = _format_line(prefix, _read(file), line_length)
-            lines.append(line)
 
-        lines = chain(lines, ['\n', '(Delete by choosing entries numbers.)'])
-        print('\n' + ''.join(lines))
+def list_for_delete(history_dir):
+    return dict(zip(count(1), _list_history_files(history_dir)))
