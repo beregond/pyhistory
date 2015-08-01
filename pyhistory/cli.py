@@ -2,19 +2,19 @@ from pathlib import Path
 
 import click
 
-from . import pyhistory, __description__
+from . import pyhistory, file_config, __description__
 from .utilities import find_file_across_parents, format_line
-
 
 LINE_PREFIX = '* '
 
-global_options = {}
+default_values = file_config.get_defaults_from_config_file_if_exists()
 
 line_length = click.option(
     '--line-length',
     help='Formatted line length.',
-    default=79,
+    default=default_values.get('line_length', 79),
     show_default=True,
+    type=int,
 )
 
 
@@ -25,17 +25,17 @@ line_length = click.option(
 @click.option(
     '--history-dir',
     help='History directory location.',
-    default='history',
+    default=default_values.get('history_dir', 'history'),
     show_default=True,
 )
 @click.option(
     '--history-file',
     help='History file name.',
-    default='HISTORY.rst',
+    default=default_values.get('history_file', 'HISTORY.rst'),
     show_default=True,
 )
 def main(context, history_dir, history_file):
-    history_file = find_file_across_parents(Path.cwd(),  history_file)
+    history_file = find_file_across_parents(Path.cwd(), history_file)
     history_dir = history_file.parent / history_dir
     context.obj = {
         'history_dir': history_dir,
@@ -70,6 +70,7 @@ def list(context, line_length):
 @click.option(
     '--at-line',
     help='Update file at line. (By default after first headline.)',
+    default=default_values.get('at_line'),
 )
 @click.option('--date', help='Date of update.')
 def update(context, version, at_line, date, line_length):

@@ -8,20 +8,12 @@ CONFIG_SECTION = 'pyhistory'
 
 
 def get_defaults_from_config_file_if_exists(file_to_check=FILE_TO_CHECK):
-    keys = [
-        'history_dir',
-        'history_file',
-        'at_line',
-        'line_length',
-    ]
-
     try:
         config_file = find_file_across_parents(Path.cwd(), file_to_check)
     except RuntimeError:
-        return {key: None for key in keys}
+        return {}
 
-    config = _get_config_from_file(config_file)
-    return {key: config.get(key) for key in keys}
+    return _get_config_from_file(config_file)
 
 
 def _get_config_from_file(config_file):

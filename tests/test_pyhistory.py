@@ -4,21 +4,15 @@ import shutil
 from verify import expect
 from click.testing import CliRunner
 
-from pyhistory.file_config import get_defaults_from_config_file_if_exists
 from pyhistory.utilities import split_into_lines
 from pyhistory.cli import main
-
-FIXTURES_DIR_PATH = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    'fixtures'
+from . import (
+    TEST_DIR, load_fixture, get_fixture_content, get_test_file_content
 )
-TEST_DIR = 'test_dir'
-TEST_DIR_PATH = os.path.join(os.getcwd(), TEST_DIR)
-
-runner = CliRunner()
 
 
 def run(command):
+    runner = CliRunner()
     return runner.invoke(main, command)
 
 
@@ -66,55 +60,55 @@ class TestPyhistory(object):
         expect(result.output).to_be_equal(_join_lines(['', '']))
 
     def test_update(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today'])
 
-        content = _get_fixture_content('history_after.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_after.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_update_with_special_headlines(self):
-        _load_fixture('history_special.rst', 'HISTORY.rst')
+        load_fixture('history_special.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today'])
 
-        content = _get_fixture_content('history_special_after.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_special_after.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_update_at_line(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '1'])
 
-        content = _get_fixture_content('history_at_line_after.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_at_line_after.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
 
-        content = _get_fixture_content('history_at_line_after.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_at_line_after.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
         run(['add', 'some_message'])
         run(['add', 'next message'])
         run(['update', '1.0.6', '--date', 'today', '--at-line', '7'])
 
-        content = _get_fixture_content('history_at_line_after2.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_at_line_after2.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_update_with_line_too_long(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
         run([
             'add', 'some very long and sophisticated message, which is too '
             'long to fit 79 characters'
@@ -132,12 +126,12 @@ class TestPyhistory(object):
 
         run(['update', '1.0.6', '--date', 'today'])
 
-        content = _get_fixture_content('history_update_long_line.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_update_long_line.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_list_long_line(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -154,7 +148,7 @@ class TestPyhistory(object):
         )
 
     def test_list_long_line_when_disabled(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -170,7 +164,7 @@ class TestPyhistory(object):
         )
 
     def test_line_length_disabled_when_negative(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -186,7 +180,7 @@ class TestPyhistory(object):
         )
 
     def test_pyhistory_when_not_in_history_file_directory(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         original_working_dir = os.getcwd()
         os.makedirs('one/two')
@@ -212,12 +206,12 @@ class TestPyhistory(object):
         run(['update', '1.0.6', '--date', 'today'])
         os.chdir(original_working_dir)
 
-        content = _get_fixture_content('history_after.rst')
-        file_content = _get_test_file_content('HISTORY.rst')
+        content = get_fixture_content('history_after.rst')
+        file_content = get_test_file_content('HISTORY.rst')
         expect(content).to_be_equal(file_content)
 
     def test_delete(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         run(['add', 'some_message'])
         run(['add', 'next message'])
@@ -262,7 +256,7 @@ class TestPyhistory(object):
         )
 
     def test_delete_long_lines(self):
-        _load_fixture('history.rst', 'HISTORY.rst')
+        load_fixture('history.rst', 'HISTORY.rst')
 
         run([
             'add', 'some very long and sophisticated message, which is too '
@@ -304,37 +298,6 @@ class TestPyhistory(object):
         os.chdir('one')
         self.test_delete()
 
-    def test_get_config_from_file(self):
-        _load_fixture('setup.cfg', 'empty.txt')
-        pattern = {
-            'history_dir': None,
-            'history_file': None,
-            'at_line': None,
-            'line_length': None,
-        }
-        expect(pattern).to_be_equal(get_defaults_from_config_file_if_exists())
-
-    def test_load_config_from_setup_cfg(self):
-        _load_fixture('setup.cfg', 'setup.cfg')
-        pattern = {
-            'history_dir': None,
-            'history_file': 'HISTORY.rst',
-            'at_line': '42',
-            'line_length': '92',
-        }
-        expect(pattern).to_be_equal(get_defaults_from_config_file_if_exists())
-
-    def test_load_config_when_file_doesnt_exist(self):
-        pattern = {
-            'history_dir': None,
-            'history_file': None,
-            'at_line': None,
-            'line_length': None,
-        }
-        expect(pattern).to_be_equal(
-            get_defaults_from_config_file_if_exists('!wrong')
-        )
-
 
 class TestUtilities(object):
 
@@ -370,22 +333,6 @@ class TestUtilities(object):
     def test_split_line_with_line_feed_at_the_end(self):
         expect(split_into_lines('cha cha\n', 6)).to_be_equal(['cha', 'cha\n'])
         expect(split_into_lines('cha cha\n', 7)).to_be_equal(['cha cha\n'])
-
-
-def _get_test_file_content(name):
-    with open(os.path.join(TEST_DIR_PATH, name)) as test_file:
-        return test_file.read()
-
-
-def _get_fixture_content(name):
-    with open(os.path.join(FIXTURES_DIR_PATH, name)) as fixture:
-        return fixture.read()
-
-
-def _load_fixture(fixture_name, destination):
-    with open(os.path.join(FIXTURES_DIR_PATH, fixture_name)) as fixture:
-        with open(os.path.join(TEST_DIR_PATH, destination), 'w') as dest:
-            dest.write(fixture.read())
 
 
 def _join_lines(output):
