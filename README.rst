@@ -11,6 +11,9 @@ Python History
 .. image:: https://img.shields.io/pypi/dm/pyhistory.svg
         :target: https://pypi.python.org/pypi/pyhistory
 
+.. image:: https://coveralls.io/repos/beregond/pyhistory/badge.png
+    :target: https://coveralls.io/r/beregond/pyhistory
+
 
 Package to help maintaining HISTORY file for Python project.
 
