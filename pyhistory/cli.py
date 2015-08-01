@@ -63,6 +63,15 @@ def list(context, line_length):
     click.echo('\n' + ''.join(formatted_lines))
 
 
+def _maybe_positive(context, param, value):
+    if value == 0 or value is None:
+        return None
+    if value < 0:
+        click.echo('"{}" must be greater than 0.'.format(param.name))
+        context.abort()
+    return value
+
+
 @main.command()
 @click.pass_context
 @click.argument('version')
@@ -71,8 +80,12 @@ def list(context, line_length):
     '--at-line',
     help='Update file at line. (By default after first headline.)',
     default=default_values.get('at_line'),
+    callback=_maybe_positive,
 )
-@click.option('--date', help='Date of update.')
+@click.option(
+    '--date',
+    help='Date of update. By default today, but can be arbitrary value.'
+)
 def update(context, version, at_line, date, line_length):
     pyhistory.update(
         context.obj['history_dir'],

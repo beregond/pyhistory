@@ -1,0 +1,5 @@
+
+
+class HistoryFileNotFound(RuntimeError):
+
+    pass
