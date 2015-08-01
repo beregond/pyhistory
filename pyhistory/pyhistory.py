@@ -7,8 +7,6 @@ from six import text_type as unicode
 
 from .utilities import format_line
 
-LINE_PREFIX = '* '
-
 
 def add(message, history_dir):
     _check_history_dir(history_dir)
