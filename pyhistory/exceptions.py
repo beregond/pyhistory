@@ -1,5 +1,5 @@
 
 
-class HistoryFileNotFound(RuntimeError):
+class FileNotFound(RuntimeError):
 
     pass

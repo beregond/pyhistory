@@ -1,5 +1,7 @@
 from itertools import chain
 
+from .exceptions import FileNotFound
+
 
 def split_into_lines(text, line_length):
     if line_length < 1:
@@ -53,7 +55,7 @@ def find_file_across_parents(directory, file):
         wanted = wanted.parent.parent / wanted.name
 
     if not wanted.exists():
-        raise RuntimeError('History file not found!', file)
+        raise FileNotFound('File not found!', file)
 
     return wanted
 

@@ -4,6 +4,7 @@ import click
 
 from . import pyhistory, file_config, __description__
 from .utilities import find_file_across_parents, format_line
+from .exceptions import FileNotFound
 
 LINE_PREFIX = '* '
 
@@ -35,7 +36,11 @@ line_length = click.option(
     show_default=True,
 )
 def main(context, history_dir, history_file):
-    history_file = find_file_across_parents(Path.cwd(), history_file)
+    try:
+        history_file = find_file_across_parents(Path.cwd(), history_file)
+    except FileNotFound:
+        click.echo("Couldn't find history file ({}).".format(history_file))
+        context.abort()
     history_dir = history_file.parent / history_dir
     context.obj = {
         'history_dir': history_dir,
