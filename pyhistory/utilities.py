@@ -14,11 +14,6 @@ def split_into_lines(text, line_length):
 
 
 def _make_lines_from_words(words, line_length):
-    if len(words) < 2:
-        for word in words:
-            yield word
-        raise StopIteration()
-
     line = _LineBuffer()
     for word in words:
         if len(line) and line.length_if_add(word) > line_length:
@@ -30,25 +25,21 @@ def _make_lines_from_words(words, line_length):
 
 class _LineBuffer(object):
 
-    def __init__(self):
-        self.line = ''
-        self.length = 0
+    def __init__(self, words=[]):
+        self.words = words or []
+
+    @property
+    def line(self):
+        return ' '.join(self.words)
 
     def __len__(self):
-        return self.length
+        return len(self.line)
 
     def add(self, word):
-        if self.line:
-            self.line += ' ' + word
-        else:
-            self.line += word
-        self.length = len(self.line)
+        self.words.append(word)
 
     def length_if_add(self, word):
-        length = len(self) + len(word)
-        if len(self):
-            length += 1
-        return length
+        return len(_LineBuffer(self.words + [word]))
 
     def flush(self):
         value = self.line
