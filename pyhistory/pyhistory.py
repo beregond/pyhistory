@@ -1,6 +1,6 @@
 import time
 from itertools import count
-from datetime import date
+from datetime import date as date_module
 from hashlib import md5
 
 from six import text_type as unicode
@@ -29,19 +29,29 @@ def _check_history_dir(history_dir):
         history_dir.mkdir()
 
 
-def list_history(history_dir):
-    return [_read(file) for file in _list_history_files(history_dir)]
+def list_(history_dir):
+    return {key: _read(file) for key, file in _list_files(history_dir).items()}
+
+
+def _list_files(history_dir):
+    if not history_dir.exists():
+        return {}
+
+    return dict(zip(count(1), sorted(history_dir.iterdir())))
 
 
 def update(
-        history_dir, history_file, version, at_line, date_, line_length,
-        prefix):
+        version, history_dir, history_file, at_line=None, date=None,
+        line_length=0, prefix=''):
     lines = _readlines(history_file)
+
+    if at_line is not None:
+        at_line = (max(int(at_line), 1))
 
     break_line = _calculate_break_line(lines, at_line)
     result = lines[:break_line]
 
-    release_date = date_ or date.today().strftime('%Y-%m-%d')
+    release_date = date or date_module.today().strftime('%Y-%m-%d')
     header = '{} ({})'.format(version, release_date)
     result.append(header + '\n')
     result.append('+' * len(header) + '\n\n')
@@ -49,7 +59,7 @@ def update(
     new_lines = [
         format_line(prefix, line, line_length)
         for line
-        in list_history(history_dir)
+        in list_(history_dir).values()
     ]
     result += new_lines
     result.append('\n')
@@ -80,9 +90,10 @@ def clear(history_dir):
 
 
 def _list_history_files(history_dir):
-    if history_dir.exists():
-        return sorted(history_dir.iterdir())
-    return []
+    if not history_dir.exists():
+        return []
+
+    return [_read(file) for file in sorted(history_dir.iterdir())]
 
 
 def _read(src):
@@ -96,13 +107,9 @@ def _readlines(src):
 
 
 def delete(entries, history_dir):
-    files = list_for_delete(history_dir)
+    files = _list_files(history_dir)
     for entry in entries:
         try:
             files[entry].unlink()
         except KeyError:
             pass
-
-
-def list_for_delete(history_dir):
-    return dict(zip(count(1), _list_history_files(history_dir)))

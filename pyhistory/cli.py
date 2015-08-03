@@ -59,11 +59,11 @@ def add(context, message):
 @click.pass_context
 @line_length
 def list(context, line_length):
-    lines = pyhistory.list_history(context.obj['history_dir'])
+    lines = pyhistory.list_(context.obj['history_dir'])
     formatted_lines = [
         format_line(LINE_PREFIX, line, line_length)
         for line
-        in lines
+        in lines.values()
     ]
     click.echo('\n' + ''.join(formatted_lines))
 
@@ -93,9 +93,9 @@ def _maybe_positive(context, param, value):
 )
 def update(context, version, at_line, date, line_length):
     pyhistory.update(
+        version,
         context.obj['history_dir'],
         context.obj['history_file'],
-        version,
         at_line,
         date,
         line_length,
@@ -119,12 +119,11 @@ def delete(context, entry, line_length):
     if entries:
         pyhistory.delete(entries, context.obj['history_dir'])
     else:
-        files = pyhistory.list_for_delete(context.obj['history_dir'])
+        files = pyhistory.list_(context.obj['history_dir'])
         click.echo()
-        for number, file in files.items():
+        for number, message in files.items():
             prefix = '{}. '.format(number)
-            with file.open() as src:
-                line = format_line(prefix, src.read(), line_length)
+            line = format_line(prefix, message, line_length)
             click.echo(line, nl=False)
 
         click.echo('\n(Delete by choosing entries numbers.)')

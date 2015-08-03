@@ -14,10 +14,6 @@ def run(command):
     return runner.invoke(main, command)
 
 
-def _list_dir_without_dotfiles(path):
-    return [item for item in os.listdir(path) if not item.startswith('.')]
-
-
 @isolated_workdir
 def test_list_empty():
     open('HISTORY.rst', 'w').close()
@@ -128,7 +124,7 @@ def test_update_with_line_too_long():
 def test_list_long_line():
     load_fixture('history.rst', 'HISTORY.rst')
 
-    run([
+    result = run([
         'add', 'some very long and sophisticated message, which is too '
         'long to fit 79 characters'
     ])
@@ -190,7 +186,7 @@ def test_pyhistory_when_not_in_history_file_directory():
     run(['add', 'some_message'])
     run(['add', 'next message'])
 
-    expect(len(_list_dir_without_dotfiles(os.getcwd()))).to_be_equal(0)
+    expect(len(os.listdir(os.getcwd()))).to_be_equal(0)
 
     result = run(['list'])
     expect(result.output).to_be_equal(_join_lines(
