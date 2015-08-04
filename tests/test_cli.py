@@ -80,23 +80,24 @@ def test_update_at_line():
     file_content = get_test_file_content('HISTORY.rst')
     expect(content).to_be_equal(file_content)
 
+
+@isolated_workdir
+def test_update_at_wrong_line():
     load_fixture('history.rst', 'HISTORY.rst')
-    _run(['add', 'some_message'])
-    _run(['add', 'next message'])
-    _run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
+    res = _run(['update', '1.0.6', '--date', 'today', '--at-line', '0'])
+    expect(res.exit_code).to_be_equal(1)
+    expect(res.output).to_be_equal(
+        '"at_line" must be greater or equal to 1.\nAborted!\n'
+    )
 
-    content = get_fixture_content('history_at_line_after.rst')
-    file_content = get_test_file_content('HISTORY.rst')
-    expect(content).to_be_equal(file_content)
 
-    load_fixture('history.rst', 'HISTORY.rst')
-    _run(['add', 'some_message'])
-    _run(['add', 'next message'])
-    _run(['update', '1.0.6', '--date', 'today', '--at-line', '-1'])
-
-    content = get_fixture_content('history_at_line_after.rst')
-    file_content = get_test_file_content('HISTORY.rst')
-    expect(content).to_be_equal(file_content)
+@isolated_workdir
+def test_update_at_negative_line():
+    res = _run(['update', '1.0.6', '--date', 'today', '--at-line', '-1'])
+    expect(res.exit_code).to_be_equal(1)
+    expect(res.output).to_be_equal(
+        '"at_line" must be greater or equal to 1.\nAborted!\n'
+    )
 
 
 @isolated_workdir

@@ -69,16 +69,13 @@ def list(context, line_length):
 
 
 def _maybe_positive(context, param, value):
-    try:
-        value = int(value)
-    except TypeError:
-        pass
-    if value == 0 or value is None:
+    if value is None:
         return None
-    if value < 0:
-        click.echo('"{}" must be greater or equal to 0.'.format(param.name))
+    if value < 1:
+        click.echo('"{}" must be greater or equal to 1.'.format(param.name))
         context.abort()
-    return value
+    else:
+        return value
 
 
 @main.command()
@@ -90,6 +87,7 @@ def _maybe_positive(context, param, value):
     help='Update file at line. (By default after first headline.)',
     default=default_values.get('at_line'),
     callback=_maybe_positive,
+    type=int,
 )
 @click.option(
     '--date',
