@@ -69,10 +69,14 @@ def list(context, line_length):
 
 
 def _maybe_positive(context, param, value):
+    try:
+        value = int(value)
+    except TypeError:
+        pass
     if value == 0 or value is None:
         return None
     if value < 0:
-        click.echo('"{}" must be greater than 0.'.format(param.name))
+        click.echo('"{}" must be greater or equal to 0.'.format(param.name))
         context.abort()
     return value
 
