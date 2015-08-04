@@ -89,13 +89,6 @@ def clear(history_dir):
     [file.unlink() for file in history_dir.iterdir()]
 
 
-def _list_history_files(history_dir):
-    if not history_dir.exists():
-        return []
-
-    return [_read(file) for file in sorted(history_dir.iterdir())]
-
-
 def _read(src):
     with src.open() as file:
         return file.read()
