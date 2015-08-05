@@ -93,11 +93,9 @@ def test_update_at_wrong_line():
 
 @isolated_workdir
 def test_update_at_negative_line():
-    res = _run(['update', '1.0.6', '--date', 'today', '--at-line', '-1'])
-    expect(res.exit_code).to_be_equal(1)
-    expect(res.output).to_be_equal(
-        '"at_line" must be greater or equal to 1.\nAborted!\n'
-    )
+    load_fixture('history.rst', 'HISTORY.rst')
+    result = _run(['update', '1.0.6', '--date', 'today', '--at-line', '-1'])
+    expect(result.exit_code).to_be_equal(1)
 
 
 @isolated_workdir
@@ -222,6 +220,12 @@ def test_delete_in_non_root():
     os.makedirs('one/two')
     os.chdir('one')
     test_delete_long_lines()
+
+
+@isolated_workdir
+def test_history_file_not_found():
+    result = _run(['update', '1.0.6', '--date', 'today'])
+    expect(result.exit_code).to_be_equal(1)
 
 
 def _join_lines(output):
