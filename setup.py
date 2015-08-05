@@ -33,9 +33,9 @@ readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 requirements = [
-    'click',
-    'pathlib',
-    'six',
+    'click>=4.1,<5.0',
+    'pathlib>=1.0.1',
+    'six>=1.9',
 ]
 
 setup(
