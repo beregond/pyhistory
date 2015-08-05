@@ -15,7 +15,7 @@ Python History
     :target: https://coveralls.io/r/beregond/pyhistory
 
 
-Package to help maintaining HISTORY file for Python project.
+App to maintain history file for your project.
 
 * Free software: BSD license
 * Source: https://github.com/beregond/pyhistory
@@ -23,17 +23,14 @@ Package to help maintaining HISTORY file for Python project.
 History directory
 -----------------
 
-PyHistory will traverse directory tree until it finds ``history file`` (by
-default ``HISTORY.rst``, can be changed in ``setup.cfg``, see section ``Config
-file``) and this will be root, where history directory will be created, in
-which all entries will be stored. Thanks to that you can add, list or remove
-entries from any point in your project - all commands will be executed in
-context of root directory.
+PyHistory maintains history entries in distributed work environment, which
+allows many developers to add/edit/remove history entries between releases
+without conflicts.
 
 Features
 --------
 
-(All commands can start either with `pyhistory` or `pyhi`.)
+(All commands can start either with `pyhistory` or shortcut - `pyhi`.)
 
 * Add history entry:
 
@@ -55,7 +52,35 @@ Features
 
   .. code-block:: bash
 
+    $ cat HISTORY.rst
+    my project
+    ==========
+
+    0.4.1 (2015-08-04)
+    ++++++++++++++++++
+
+    * Added PyHistory to project.
+    * Improved codebase.
+    * Other features.
+
     $ pyhi update 0.4.2
+    $ cat HISTORY.rst
+    my project
+    ==========
+
+    0.4.2 (2015-08-05)
+    ++++++++++++++++++
+
+    * Bug fixes
+    * Change in API
+    * Removed old features
+
+    0.4.1 (2015-08-04)
+    ++++++++++++++++++
+
+    * Added PyHistory to project
+    * Improved codebase
+    * Other features
 
 * Delete selected entries:
 
@@ -89,7 +114,8 @@ Features
 
     $ pyhi clear --yes
 
-* Config file:
+Config file
+~~~~~~~~~~~
 
   You can adjust Pyhistory behaviour to your needs by ``setup.cfg`` file. Just
   put ``pyhistory`` section in there:
