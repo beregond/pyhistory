@@ -1,7 +1,6 @@
 import os
 import tempfile
 import shutil
-from functools import wraps
 from pathlib import Path
 
 
@@ -34,7 +33,6 @@ def get_fixture_content(name):
 
 def isolated_workdir(test_function):
 
-    @wraps(test_function)
     def wrapped():
         temp_dir = tempfile.mkdtemp()
         original_working_dir = os.getcwd()
@@ -51,7 +49,6 @@ def isolated_workdir(test_function):
 
 def isolated_env(test_function):
 
-    @wraps(test_function)
     def wrapped(*args, **kwargs):
         temp_dir = tempfile.mkdtemp()
         history_file = Path(temp_dir) / 'HISTORY.rst'
