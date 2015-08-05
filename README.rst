@@ -117,12 +117,12 @@ Features
 Config file
 ~~~~~~~~~~~
 
-  You can adjust Pyhistory behaviour to your needs by ``setup.cfg`` file. Just
-  put ``pyhistory`` section in there:
+You can adjust Pyhistory behaviour to your needs by ``setup.cfg`` file. Just
+put ``pyhistory`` section in there:
 
-  .. code-block:: ini
+.. code-block:: ini
 
-    [pyhistory]
-    history_dir = some_dir  # 'history' by default
-    history_file = myhistory.rst  # 'HISTORY.rst' by default
-    at_line = 42  # by default history will be injected after first headline
+  [pyhistory]
+  history_dir = some_dir  # 'history' by default
+  history_file = myhistory.rst  # 'HISTORY.rst' by default
+  at_line = 42  # by default history will be injected after first headline
