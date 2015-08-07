@@ -3,6 +3,16 @@
 History
 -------
 
+2.0 (2015-08-07)
+++++++++++++++++
+
+* Added line splitting.
+* Moved CLI interface to Click library.
+* Added '--yes' flag for clear command.
+* Removed 'squash' subcommand.
+* Added microseconds to generated files.
+* 0 as at-line option in no longer valid.
+
 1.3 (2014-10-17)
 ++++++++++++++++
 
