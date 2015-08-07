@@ -24,8 +24,8 @@ History directory
 -----------------
 
 PyHistory maintains history entries in distributed work environment, which
-allows many developers to add/edit/remove history entries between releases
-without conflicts.
+allows many developers to add/remove history entries between releases without
+conflicts.
 
 Features
 --------
