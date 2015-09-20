@@ -13,15 +13,15 @@ def add(message, history_dir):
     message = unicode(message)
     hashed = _make_hash_name(message)
     filepath = history_dir / hashed
-    with filepath.open('w') as file:
-        file.write(message + '\n')
+    with filepath.open('w') as history_entry:
+        history_entry.write(message + '\n')
 
 
 def _make_hash_name(message):
-    return '{}-{}'.format(
-        int(time.time() * 10 ** 6),
-        md5(message.encode('utf-8')).hexdigest()[:7],
-    )
+    message_hash = md5(message.encode('utf-8'))
+    short_hash = message_hash.hexdigest()[:7]
+    timestamp = int(time.time() * 10 ** 6)
+    return '{}-{}'.format(timestamp, short_hash)
 
 
 def _check_history_dir(history_dir):
@@ -56,7 +56,7 @@ def _calculate_new_history(history_file, at_line, content):
     break_line = _calculate_break_line(old_lines, at_line)
 
     result = old_lines[:break_line] + content + old_lines[break_line:]
-    return ''.join(result)
+    return unicode(''.join(result))
 
 
 def _get_paragraph(version, history_dir, date, line_length, prefix):

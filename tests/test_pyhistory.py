@@ -41,6 +41,19 @@ def test_update(history_dir, history_file):
 
 
 @isolated_env
+def test_update_empty_file(history_dir, history_file):
+    load_fixture_to('empty.txt', history_file)
+    add('some_message', history_dir)
+    add('next message', history_dir)
+    update('1.0.6', history_dir, history_file, date='today', prefix='* ')
+
+    content = get_fixture_content('empty_after.rst')
+    with history_file.open() as src:
+        file_content = src.read()
+    expect(content.rstrip('\n')).to_be_equal(file_content.rstrip('\n'))
+
+
+@isolated_env
 def test_update_with_special_headlines(history_dir, history_file):
     load_fixture_to('history_special.rst', history_file)
     add('some_message', history_dir)

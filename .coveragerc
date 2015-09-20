@@ -1,3 +1,5 @@
 [run]
+branch = True
+source = pyhistory/*
 omit =
     pyhistory/__init__.py
