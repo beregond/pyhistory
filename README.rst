@@ -28,7 +28,8 @@ PyHistory maintains history entries in distributed work environment, which
 allows many developers to add/remove history entries between releases without
 conflicts.
 
-Installation ------------
+Installation
+------------
 
 .. code-block:: bash
 
