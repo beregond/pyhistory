@@ -34,10 +34,8 @@ def list_(history_dir):
 
 
 def _list_files(history_dir):
-    if not history_dir.exists():
-        return {}
-
-    return dict(zip(count(1), sorted(history_dir.iterdir())))
+    lines = sorted(history_dir.iterdir()) if history_dir.exists() else []
+    return dict(zip(count(1), lines))
 
 
 def update(
@@ -54,7 +52,6 @@ def update(
 def _calculate_new_history(history_file, at_line, content):
     old_lines = _readlines(history_file)
     break_line = _calculate_break_line(old_lines, at_line)
-
     result = old_lines[:break_line] + content + old_lines[break_line:]
     return unicode(''.join(result))
 
@@ -89,7 +86,7 @@ def _calculate_break_line(lines, at_line):
 
 
 def clear(history_dir):
-    [file.unlink() for file in history_dir.iterdir()]
+    [history_file.unlink() for history_file in history_dir.iterdir()]
 
 
 def _read(src):
