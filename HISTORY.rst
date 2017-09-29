@@ -3,6 +3,13 @@
 History
 -------
 
+2.1 (2017-09-29)
+++++++++++++++++
+
+* Fixed error for empty file.
+* Unpinned hard requirements for package.
+* Added support for py35 and py36.
+
 2.0 (2015-08-07)
 ++++++++++++++++
 
