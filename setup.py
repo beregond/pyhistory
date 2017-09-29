@@ -32,11 +32,6 @@ class PyTest(TestCommand):
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-requirements = [
-    'click>=4.1,<5.0',
-    'pathlib>=1.0.1',
-    'six>=1.9',
-]
 
 setup(
     name=PROJECT_NAME,
@@ -53,7 +48,11 @@ setup(
         PROJECT_NAME: PROJECT_NAME,
     },
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=[
+        'click',
+        'pathlib',
+        'six',
+    ],
     entry_points={
         'console_scripts': [
             'pyhistory = pyhistory.cli:main',
@@ -72,6 +71,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     cmdclass={
         'test': PyTest,
