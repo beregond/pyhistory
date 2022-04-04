@@ -1,5 +1,5 @@
 from pathlib import Path
-from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
+from configparser import ConfigParser, NoSectionError, NoOptionError
 
 from .utilities import find_file_across_parents
 

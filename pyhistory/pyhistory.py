@@ -3,14 +3,12 @@ from itertools import count
 from datetime import date as date_module
 from hashlib import md5
 
-from six import text_type as unicode
-
 from .utilities import format_line
 
 
 def add(message, history_dir):
     _check_history_dir(history_dir)
-    message = unicode(message)
+    message = str(message)
     hashed = _make_hash_name(message)
     filepath = history_dir / hashed
     with filepath.open('w') as history_entry:
@@ -53,7 +51,7 @@ def _calculate_new_history(history_file, at_line, content):
     old_lines = _readlines(history_file)
     break_line = _calculate_break_line(old_lines, at_line)
     result = old_lines[:break_line] + content + old_lines[break_line:]
-    return unicode(''.join(result))
+    return ''.join(result)
 
 
 def _get_paragraph(version, history_dir, date, line_length, prefix):
