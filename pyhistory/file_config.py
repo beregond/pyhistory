@@ -3,8 +3,8 @@ from pathlib import Path
 
 from .utilities import find_file_across_parents
 
-FILE_TO_CHECK = 'setup.cfg'
-CONFIG_SECTION = 'pyhistory'
+FILE_TO_CHECK = "setup.cfg"
+CONFIG_SECTION = "pyhistory"
 
 
 def get_defaults_from_config_file_if_exists(file_to_check=FILE_TO_CHECK):
@@ -23,7 +23,6 @@ def _get_config_from_file(config_file):
 
 
 class _ConfigGetter(object):
-
     def __init__(self, parser, section):
         self.parser = parser
         self.section = section

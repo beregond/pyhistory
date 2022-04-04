@@ -3,20 +3,20 @@ import shutil
 import tempfile
 from pathlib import Path
 
-FIXTURES_DIR_PATH = Path(__file__).parent / 'fixtures'
-TEST_DIR_NAME = 'test_dir'
+FIXTURES_DIR_PATH = Path(__file__).parent / "fixtures"
+TEST_DIR_NAME = "test_dir"
 TEST_DIR = Path.cwd() / TEST_DIR_NAME
 
 
 def load_fixture(fixture_name, destination):
     with (FIXTURES_DIR_PATH / fixture_name).open() as fixture:
-        with (Path.cwd() / destination).open('w') as dest:
+        with (Path.cwd() / destination).open("w") as dest:
             dest.write(fixture.read())
 
 
 def load_fixture_to(fixture_name, destination):
     with (FIXTURES_DIR_PATH / fixture_name).open() as fixture:
-        with destination.open('w') as dest:
+        with destination.open("w") as dest:
             dest.write(fixture.read())
 
 
@@ -31,7 +31,6 @@ def get_fixture_content(name):
 
 
 def isolated_workdir(test_function):
-
     def wrapped():
         temp_dir = tempfile.mkdtemp()
         original_working_dir = os.getcwd()
@@ -47,11 +46,10 @@ def isolated_workdir(test_function):
 
 
 def isolated_env(test_function):
-
     def wrapped(*args, **kwargs):
         temp_dir = tempfile.mkdtemp()
-        history_file = Path(temp_dir) / 'HISTORY.rst'
-        history_dir = Path(temp_dir) / 'history'
+        history_file = Path(temp_dir) / "HISTORY.rst"
+        history_dir = Path(temp_dir) / "history"
         try:
             test_function(history_dir, history_file, *args, **kwargs)
         finally:

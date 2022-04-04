@@ -39,3 +39,11 @@ jobs:
       - name: Tests
         run: |
           pytest --cov .
+
+      - name: Check isort
+        run: |
+          isort --check .
+
+      - name: Check formatting with black
+        run: |
+          black --check .
