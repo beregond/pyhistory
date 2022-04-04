@@ -5,12 +5,8 @@ from verify import expect
 
 from pyhistory.cli import main
 
-from . import (
-    get_fixture_content,
-    get_test_file_content,
-    isolated_workdir,
-    load_fixture,
-)
+from . import (get_fixture_content, get_test_file_content, isolated_workdir,
+               load_fixture)
 
 
 @isolated_workdir
