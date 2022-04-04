@@ -2,4 +2,7 @@
 branch = True
 source = pyhistory/*
 omit =
+    setup.py
     pyhistory/__init__.py
+[report]
+show_missing = True
