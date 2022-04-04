@@ -3,31 +3,11 @@
 
 import sys
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
 
 from pyhistory import __version__, __author__, __email__, __description__
 
 
 PROJECT_NAME = 'pyhistory'
-
-
-class PyTest(TestCommand):
-
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = ['--cov', PROJECT_NAME]
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
@@ -69,7 +49,4 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
-    cmdclass={
-        'test': PyTest,
-    },
 )

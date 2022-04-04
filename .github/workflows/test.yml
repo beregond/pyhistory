@@ -38,4 +38,4 @@ jobs:
 
       - name: Tests
         run: |
-          python setup.py test
+          pytest --cov .
