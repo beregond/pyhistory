@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-import sys
-
 from setuptools import setup
 
 from pyhistory import __author__, __description__, __email__, __version__

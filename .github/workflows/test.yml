@@ -47,3 +47,7 @@ jobs:
       - name: Check formatting with black
         run: |
           black --check .
+
+      - name: Run flake8 linter
+        run: |
+          flake8 .
