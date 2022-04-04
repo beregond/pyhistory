@@ -6,12 +6,12 @@ from .exceptions import FileNotFound
 def split_into_lines(text, line_length):
     if line_length < 1:
         return [text]
-    have_line_feed = text.endswith('\n')
+    have_line_feed = text.endswith("\n")
     if have_line_feed:
-        text = text.rstrip('\n')
-    lines = list(_make_lines_from_words(text.split(' '), line_length))
+        text = text.rstrip("\n")
+    lines = list(_make_lines_from_words(text.split(" "), line_length))
     if have_line_feed:
-        lines[-1] = lines[-1] + '\n'
+        lines[-1] = lines[-1] + "\n"
     return lines
 
 
@@ -26,13 +26,12 @@ def _make_lines_from_words(words, line_length):
 
 
 class _LineBuffer(object):
-
     def __init__(self, words=[]):
         self.words = words or []
 
     @property
     def line(self):
-        return ' '.join(self.words)
+        return " ".join(self.words)
 
     def __len__(self):
         return len(self.line)
@@ -55,7 +54,7 @@ def find_file_across_parents(directory, file):
         wanted = wanted.parent.parent / wanted.name
 
     if not wanted.exists():
-        raise FileNotFound('File not found!', file)
+        raise FileNotFound("File not found!", file)
 
     return wanted
 
@@ -63,13 +62,13 @@ def find_file_across_parents(directory, file):
 def format_line(prefix, content, line_length):
     prefix_length = len(prefix)
     content = split_into_lines(content, line_length - prefix_length)
-    secondary_prefix = ' ' * prefix_length
+    secondary_prefix = " " * prefix_length
     lines = chain(
         [_prefix_line(prefix, content[0])],
-        [_prefix_line(secondary_prefix, line) for line in content[1:]]
+        [_prefix_line(secondary_prefix, line) for line in content[1:]],
     )
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def _prefix_line(prefix, content):
-    return '{}{}'.format(prefix, content)
+    return "{}{}".format(prefix, content)
