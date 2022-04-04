@@ -1,7 +1,7 @@
 import time
-from itertools import count
 from datetime import date as date_module
 from hashlib import md5
+from itertools import count
 
 from .utilities import format_line
 

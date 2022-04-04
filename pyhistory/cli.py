@@ -2,9 +2,9 @@ from pathlib import Path
 
 import click
 
-from . import pyhistory, file_config, __description__
-from .utilities import find_file_across_parents, format_line
+from . import __description__, file_config, pyhistory
 from .exceptions import FileNotFound
+from .utilities import find_file_across_parents, format_line
 
 LINE_PREFIX = '* '
 

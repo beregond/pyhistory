@@ -2,10 +2,10 @@
 # coding: utf-8
 
 import sys
+
 from setuptools import setup
 
-from pyhistory import __version__, __author__, __email__, __description__
-
+from pyhistory import __author__, __description__, __email__, __version__
 
 PROJECT_NAME = 'pyhistory'
 

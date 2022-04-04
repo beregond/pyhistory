@@ -1,5 +1,5 @@
+from configparser import ConfigParser, NoOptionError, NoSectionError
 from pathlib import Path
-from configparser import ConfigParser, NoSectionError, NoOptionError
 
 from .utilities import find_file_across_parents
 

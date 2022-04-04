@@ -1,8 +1,7 @@
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
-
 
 FIXTURES_DIR_PATH = Path(__file__).parent / 'fixtures'
 TEST_DIR_NAME = 'test_dir'

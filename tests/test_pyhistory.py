@@ -1,9 +1,9 @@
 
 import pytest
-
 from verify import expect
 
-from pyhistory.pyhistory import list_, add, clear, update, delete
+from pyhistory.pyhistory import add, clear, delete, list_, update
+
 from . import get_fixture_content, isolated_env, load_fixture_to
 
 

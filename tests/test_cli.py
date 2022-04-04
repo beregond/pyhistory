@@ -1,12 +1,12 @@
 import os
 
-from verify import expect
 from click.testing import CliRunner
+from verify import expect
 
 from pyhistory.cli import main
-from . import (
-    load_fixture, get_fixture_content, get_test_file_content, isolated_workdir,
-)
+
+from . import (get_fixture_content, get_test_file_content, isolated_workdir,
+               load_fixture)
 
 
 @isolated_workdir

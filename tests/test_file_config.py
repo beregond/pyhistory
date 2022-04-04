@@ -1,7 +1,8 @@
 from verify import expect
 
 from pyhistory.file_config import get_defaults_from_config_file_if_exists
-from . import load_fixture, isolated_workdir
+
+from . import isolated_workdir, load_fixture
 
 
 @isolated_workdir
