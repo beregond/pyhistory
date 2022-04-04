@@ -4,6 +4,5 @@ coverage==3.7.1
 invoke==0.8.2
 pytest==2.6.4
 pytest-cov==1.8.1
-tox==1.7.1
 verify==1.1.1
 wheel==0.23.0
