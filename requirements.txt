@@ -13,7 +13,7 @@ platformdirs==2.5.1
 pluggy==1.0.0
 py==1.11.0
 pycodestyle==2.8.0
-pydash==5.1.0
+pydash==6.0.0
 pyflakes==2.4.0
 pyparsing==3.0.7
 pytest==7.1.1
