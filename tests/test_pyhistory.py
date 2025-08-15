@@ -18,9 +18,7 @@ def test_add_list_and_clear(history_dir, history_file):
 
     add("next message", history_dir)
 
-    expect(list_(history_dir)).to_be_equal(
-        {1: "some_message\n", 2: "next message\n"}
-    )
+    expect(list_(history_dir)).to_be_equal({1: "some_message\n", 2: "next message\n"})
 
     clear(history_dir)
     expect(list_(history_dir)).to_be_equal({})
@@ -106,8 +104,7 @@ def test_update_with_line_too_long(history_dir, history_file):
         history_dir,
     )
     add(
-        "next message, which also is very long, but should fit into 79"
-        " characters aaaa",
+        "next message, which also is very long, but should fit into 79 characters aaaa",
         history_dir,
     )
     add(
@@ -140,9 +137,7 @@ def test_delete(history_dir, history_file):
     add("some_message", history_dir)
     add("next message", history_dir)
 
-    expect(list_(history_dir)).to_be_equal(
-        {1: "some_message\n", 2: "next message\n"}
-    )
+    expect(list_(history_dir)).to_be_equal({1: "some_message\n", 2: "next message\n"})
 
     delete([1], history_dir)
     expect(list_(history_dir)).to_be_equal({1: "next message\n"})

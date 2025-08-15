@@ -67,8 +67,7 @@ def _get_paragraph(version, history_dir, date, line_length, prefix):
         "+" * len(header) + "\n\n",
     ]
     lines = [
-        format_line(prefix, line, line_length)
-        for line in list_(history_dir).values()
+        format_line(prefix, line, line_length) for line in list_(history_dir).values()
     ]
     content += lines
     content.append("\n")
