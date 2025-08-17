@@ -1,3 +1,2 @@
 class FileNotFound(RuntimeError):
-
     pass

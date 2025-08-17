@@ -1,3 +1,40 @@
-[tool.black]
-line-length = 79
-target-version = ["py39"]
+[build-system]
+requires = ["hatchling", "versioningit"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyhistory"
+license = "MIT AND (Apache-2.0 OR BSD-2-Clause)"
+dynamic = ["version"]
+description = """
+  PyHistory maintains history entries in distributed work environment,
+  which allows many developers to add/remove history entries between releases without conflicts.
+"""
+readme = "README.rst"
+classifiers = [
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: BSD License",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = ["click"]
+
+[project.scripts]
+pyhistory = "pyhistory.cli:main"
+pyhi = "pyhistory.cli:main"
+
+[project.optional-dependencies]
+dev = ["coverage", "mccabe", "pytest", "pytest-cov", "verify"]
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit]
+default-version = "0.0.0"
+
+[tool.versioningit.write]
+file = "src/pyhistory/_version.py"
