@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from . import __description__, file_config, pyhistory
+from . import file_config, pyhistory
 from .exceptions import FileNotFound
 from .utilities import find_file_across_parents, format_line
 
@@ -19,7 +19,7 @@ line_length = click.option(
 )
 
 
-@click.group(help=__description__)
+@click.group(help="PyHistory maintains history entries for your project.")
 @click.pass_context
 @click.version_option()
 @click.help_option("-h")
