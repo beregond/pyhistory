@@ -28,7 +28,7 @@ pyhistory = "pyhistory.cli:main"
 pyhi = "pyhistory.cli:main"
 
 [project.optional-dependencies]
-dev = ["coverage", "mccabe", "pytest", "pytest-cov"]
+dev = ["coverage", "mccabe", "pytest", "pytest-cov", "verify"]
 
 [tool.hatch.version]
 source = "versioningit"
