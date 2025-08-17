@@ -37,4 +37,4 @@ source = "versioningit"
 default-version = "0.0.0"
 
 [tool.versioningit.write]
-file = "pyhistory/_version.py"
+file = "src/pyhistory/_version.py"

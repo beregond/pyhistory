@@ -1,5 +1,5 @@
 __pycache__
 dist
 .coverage
-pyhistory/_version.py
+src/pyhistory/_version.py
 htmlcov
