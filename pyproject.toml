@@ -10,7 +10,7 @@ description = """
   PyHistory maintains history entries in distributed work environment,
   which allows many developers to add/remove history entries between releases without conflicts.
 """
-readme = "README.rst"
+readme = "README.md"
 classifiers = [
   "Intended Audience :: Developers",
   "License :: OSI Approved :: BSD License",
@@ -22,6 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = ["click"]
+authors = [{ name = "Szczepan Cieślik", email = "szczepan.cieslik@gmail.com" }]
 
 [project.scripts]
 pyhistory = "pyhistory.cli:main"
@@ -29,6 +30,7 @@ pyhi = "pyhistory.cli:main"
 
 [project.optional-dependencies]
 dev = ["coverage", "mccabe", "pytest", "pytest-cov", "verify"]
+docs = ["sphinx", "sphinx-mdinclude"]
 
 [tool.hatch.version]
 source = "versioningit"

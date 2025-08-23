@@ -64,11 +64,7 @@ def format_line(prefix, content, line_length):
     content = split_into_lines(content, line_length - prefix_length)
     secondary_prefix = " " * prefix_length
     lines = chain(
-        [_prefix_line(prefix, content[0])],
-        [_prefix_line(secondary_prefix, line) for line in content[1:]],
+        [f"{prefix}{content[0]}"],
+        [f"{secondary_prefix}{line}" for line in content[1:]],
     )
     return "\n".join(lines)
-
-
-def _prefix_line(prefix, content):
-    return "{}{}".format(prefix, content)
