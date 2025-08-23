@@ -39,7 +39,7 @@ def main(context, history_dir, history_file):
     try:
         history_file = find_file_across_parents(Path.cwd(), history_file)
     except FileNotFound:
-        click.echo("Couldn't find history file ({}).".format(history_file))
+        click.echo(f"Couldn't find history file ({history_file}).")
         context.abort()
     history_dir = history_file.parent / history_dir
     context.obj = {
@@ -70,7 +70,7 @@ def _maybe_positive(context, param, value):
     if value is None:
         return None
     if value < 1:
-        click.echo('"{}" must be greater or equal to 1.'.format(param.name))
+        click.echo(f'"{param.name}" must be greater or equal to 1.')
         context.abort()
     else:
         return value
@@ -122,7 +122,7 @@ def delete(context, entry, line_length):
         files = pyhistory.list_(context.obj["history_dir"])
         click.echo()
         for number, message in files.items():
-            prefix = "{}. ".format(number)
+            prefix = f"{number}. "
             line = format_line(prefix, message, line_length)
             click.echo(line, nl=False)
 
