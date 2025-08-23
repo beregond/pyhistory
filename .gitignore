@@ -3,3 +3,4 @@ dist
 .coverage
 src/pyhistory/_version.py
 htmlcov
+docs/_build

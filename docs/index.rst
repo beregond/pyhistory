@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Python History's documentation!
-======================================
+==========================================
 
 Contents:
 
@@ -14,8 +14,6 @@ Contents:
    readme
    installation
    usage
-   contributing
-   authors
    history
 
 Indices and tables
