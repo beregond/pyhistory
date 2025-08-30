@@ -1,0 +1,8 @@
+[build-system]
+requires = ["hatchling", "versioningit"]
+build-backend = "hatchling.build"
+
+[tool.pyhistory]
+history_file = "history.md"
+at_line = 7
+md_header_level = 2

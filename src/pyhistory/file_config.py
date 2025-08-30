@@ -1,34 +1,36 @@
-from configparser import ConfigParser, NoOptionError, NoSectionError
+import toml
+from typing import Any
+
+from configparser import ConfigParser
 from pathlib import Path
 
 from .utilities import find_file_across_parents
+from .exceptions import FileNotFound
 
-FILE_TO_CHECK = "setup.cfg"
+CFG_FILE_TO_CHECK = "setup.cfg"
+TOML_FILE_TO_CHECK = "pyproject.toml"
 CONFIG_SECTION = "pyhistory"
 
 
-def get_defaults_from_config_file_if_exists(file_to_check=FILE_TO_CHECK):
+def get_defaults_from_config_file_if_exists() -> dict[str, Any]:
     try:
-        config_file = find_file_across_parents(Path.cwd(), file_to_check)
-    except RuntimeError:
+        config_file = find_file_across_parents(Path.cwd(), CFG_FILE_TO_CHECK)
+    except FileNotFound:
+        pass
+    else:
+        parser = ConfigParser()
+        parser.read(str(config_file))
+        return (
+            dict(parser.items(CONFIG_SECTION))
+            if parser.has_section(CONFIG_SECTION)
+            else {}
+        )
+
+    try:
+        config_file = find_file_across_parents(Path.cwd(), TOML_FILE_TO_CHECK)
+    except FileNotFound:
         return {}
-
-    return _get_config_from_file(config_file)
-
-
-def _get_config_from_file(config_file):
-    parser = ConfigParser()
-    parser.read(str(config_file))
-    return _ConfigGetter(parser, CONFIG_SECTION)
-
-
-class _ConfigGetter(object):
-    def __init__(self, parser, section):
-        self.parser = parser
-        self.section = section
-
-    def get(self, key, default=None):
-        try:
-            return self.parser.get(self.section, key)
-        except (NoSectionError, NoOptionError):
-            return default
+    else:
+        with config_file.open() as f:
+            data = toml.load(f)
+            return data.get("tool", {}).get(CONFIG_SECTION, {})

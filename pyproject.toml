@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["click"]
+dependencies = ["click", "toml"]
 authors = [{ name = "Szczepan Cieślik", email = "szczepan.cieslik@gmail.com" }]
 
 [project.scripts]
