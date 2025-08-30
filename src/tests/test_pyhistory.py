@@ -1,5 +1,4 @@
 import pytest
-from verify import expect
 
 from pyhistory.pyhistory import add, clear, delete, list_, update
 
@@ -8,20 +7,20 @@ from . import get_fixture_content, isolated_env, load_fixture_to
 
 @isolated_env
 def test_list_empty(history_dir, history_file):
-    expect(list_(history_dir)).to_be_equal({})
+    assert list_(history_dir) == {}
 
 
 @isolated_env
 def test_add_list_and_clear(history_dir, history_file):
     add("some_message", history_dir)
-    expect(list_(history_dir)).to_be_equal({1: "some_message\n"})
+    assert list_(history_dir) == {1: "some_message\n"}
 
     add("next message", history_dir)
 
-    expect(list_(history_dir)).to_be_equal({1: "some_message\n", 2: "next message\n"})
+    assert list_(history_dir) == {1: "some_message\n", 2: "next message\n"}
 
     clear(history_dir)
-    expect(list_(history_dir)).to_be_equal({})
+    assert list_(history_dir) == {}
 
 
 @isolated_env
@@ -34,7 +33,7 @@ def test_update(history_dir, history_file):
     content = get_fixture_content("history_after.rst")
     with history_file.open() as src:
         file_content = src.read()
-    expect(content).to_be_equal(file_content)
+    assert content == file_content
 
 
 @isolated_env
@@ -47,7 +46,7 @@ def test_update_empty_file(history_dir, history_file):
     content = get_fixture_content("empty_after.rst")
     with history_file.open() as src:
         file_content = src.read()
-    expect(content.rstrip("\n")).to_be_equal(file_content.rstrip("\n"))
+    assert content.rstrip("\n") == file_content.rstrip("\n")
 
 
 @isolated_env
@@ -60,7 +59,7 @@ def test_update_with_special_headlines(history_dir, history_file):
     content = get_fixture_content("history_special_after.rst")
     with history_file.open() as src:
         file_content = src.read()
-    expect(content).to_be_equal(file_content)
+    assert content == file_content
 
 
 @pytest.mark.parametrize(
@@ -92,7 +91,7 @@ def _test_update_at_line(history_dir, history_file, at_line, fixture_name):
     content = get_fixture_content(fixture_name)
     with history_file.open() as src:
         file_content = src.read()
-    expect(content).to_be_equal(file_content)
+    assert content == file_content
 
 
 @isolated_env
@@ -127,7 +126,7 @@ def test_update_with_line_too_long(history_dir, history_file):
     content = get_fixture_content("history_update_long_line.rst")
     with history_file.open() as src:
         file_content = src.read()
-    expect(content).to_be_equal(file_content)
+    assert content == file_content
 
 
 @isolated_env
@@ -137,18 +136,18 @@ def test_delete(history_dir, history_file):
     add("some_message", history_dir)
     add("next message", history_dir)
 
-    expect(list_(history_dir)).to_be_equal({1: "some_message\n", 2: "next message\n"})
+    assert list_(history_dir) == {1: "some_message\n", 2: "next message\n"}
 
     delete([1], history_dir)
-    expect(list_(history_dir)).to_be_equal({1: "next message\n"})
+    assert list_(history_dir) == {1: "next message\n"}
 
     add("test", history_dir)
     add("test2", history_dir)
 
     expected_output = {1: "next message\n", 2: "test\n", 3: "test2\n"}
-    expect(list_(history_dir)).to_be_equal(expected_output)
+    assert list_(history_dir) == expected_output
     delete([10], history_dir)
-    expect(list_(history_dir)).to_be_equal(expected_output)
+    assert list_(history_dir) == expected_output
 
     delete([2, 3, 5, 101], history_dir)
-    expect(list_(history_dir)).to_be_equal({1: "next message\n"})
+    assert list_(history_dir) == {1: "next message\n"}

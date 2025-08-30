@@ -1,5 +1,3 @@
-from verify import expect
-
 from pyhistory.file_config import get_defaults_from_config_file_if_exists
 
 from . import isolated_workdir, load_fixture
@@ -16,7 +14,7 @@ def test_get_config_from_file():
     }
     values = get_defaults_from_config_file_if_exists()
     for key, value in pattern.items():
-        expect(value).to_be_equal(values.get(key))
+        assert value == values.get(key)
 
 
 @isolated_workdir
@@ -30,7 +28,7 @@ def test_load_config_from_setup_cfg():
     }
     values = get_defaults_from_config_file_if_exists()
     for key, value in pattern.items():
-        expect(value).to_be_equal(values.get(key))
+        assert value == values.get(key)
 
 
 @isolated_workdir
@@ -43,4 +41,4 @@ def test_load_config_when_file_doesnt_exist():
     }
     values = get_defaults_from_config_file_if_exists()
     for key, value in pattern.items():
-        expect(value).to_be_equal(values.get(key))
+        assert value == values.get(key)
