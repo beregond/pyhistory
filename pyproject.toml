@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["click"]
+dependencies = ["click", "toml"]
 authors = [{ name = "Szczepan Cieślik", email = "szczepan.cieslik@gmail.com" }]
 
 [project.scripts]
@@ -29,7 +29,7 @@ pyhistory = "pyhistory.cli:main"
 pyhi = "pyhistory.cli:main"
 
 [project.optional-dependencies]
-dev = ["coverage", "mccabe", "pytest", "pytest-cov", "verify"]
+dev = ["coverage", "mccabe", "pytest", "pytest-cov"]
 docs = ["sphinx", "sphinx-mdinclude"]
 
 [tool.hatch.version]

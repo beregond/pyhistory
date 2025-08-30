@@ -109,12 +109,22 @@ pip install pyhistory
 
 ## Config file
 
-You can adjust Pyhistory behaviour to your needs by ``setup.cfg`` file. Just
-put ``pyhistory`` section in there:
+(``setup.cfg`` has precedence over ``pyproject.toml`` for backward compatibility!)
+
+You can adjust Pyhistory behaviour to your needs by adding config to ``pyproject.toml`` file:
+
+```toml
+  [tool.pyhistory]
+  history_dir = "some_dir"  # 'history' by default
+  history_file = "myhistory.md"  # 'HISTORY.rst' by default
+  at_line = 42  # by default history will be injected after first headline
+```
+
+You can also add config to ``setup.cfg`` file. Just put ``pyhistory`` section in there:
 
 ```ini
   [pyhistory]
-  history_dir = some_dir  # 'history' by default
-  history_file = myhistory.rst  # 'HISTORY.rst' by default
-  at_line = 42  # by default history will be injected after first headline
+  history_dir = some_dir
+  history_file = myhistory.rst
+  at_line = 42
 ```
