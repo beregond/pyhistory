@@ -8,7 +8,6 @@ from . import (
     get_fixture_content,
     get_test_file_content,
     isolated_env,
-    isolated_workdir,
     load_fixture,
 )
 

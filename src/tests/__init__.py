@@ -31,21 +31,6 @@ def get_fixture_content(name):
         return fixture.read()
 
 
-def isolated_workdir(test_function):
-    def wrapped():
-        temp_dir = tempfile.mkdtemp()
-        original_working_dir = os.getcwd()
-        os.chdir(temp_dir)
-
-        try:
-            test_function()
-        finally:
-            os.chdir(original_working_dir)
-            shutil.rmtree(temp_dir)
-
-    return wrapped
-
-
 @contextmanager
 def isolated_env():
     temp_dir = tempfile.mkdtemp()
