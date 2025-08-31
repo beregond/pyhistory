@@ -8,6 +8,7 @@ App to maintain history file for your project.
 * Free software: BSD license
 * Source: <https://github.com/beregond/pyhistory>
 * PyPI: <https://pypi.python.org/pypi/pyhistory>
+* ReadTheDocs:
 
 PyHistory maintains history entries in distributed work environment, which
 allows many developers to add/remove history entries between releases without
