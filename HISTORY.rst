@@ -3,6 +3,14 @@
 History
 -------
 
+2.3.0 (2025-08-31)
+++++++++++++++++++
+
+* Added support for python 3.10, 3.11, 3.12 and 3.13.
+* Removed support for python 3.7 and 3.8.
+* Added pyproject.toml support as config source
+* Added markdown history files support.
+
 2.2.0 (2022-04-04)
 ++++++++++++++++++
 
