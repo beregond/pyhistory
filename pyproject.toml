@@ -40,3 +40,6 @@ default-version = "0.0.0"
 
 [tool.versioningit.write]
 file = "src/pyhistory/_version.py"
+
+[tool.pyhistory]
+history_file = "HISTORY.rst"

@@ -1,11 +1,21 @@
 import time
+import logging
+from enum import Enum
 from datetime import date as date_module
 from hashlib import md5
 from itertools import count
 from pathlib import Path
-from typing import Optional
+from typing import Optional, ValuesView
 
 from .utilities import format_line
+
+
+logger = logging.getLogger(__name__)
+
+
+class Format(Enum):
+    MARKDOWN = "markdown"
+    RST = "rst"
 
 
 def add(message: str, history_dir: Path) -> None:
@@ -46,41 +56,64 @@ def update(
     date: Optional[str] = None,
     line_length: int = 0,
     prefix: str = "",
+    md_header_level: int = 2,
 ) -> None:
     date = date or date_module.today().strftime("%Y-%m-%d")
-    content = _get_paragraph(version, history_dir, date, line_length, prefix)
-    history = _calculate_new_history(history_file, at_line, content)
+    old_lines = _readlines(history_file)
+    lines = list_(history_dir).values()
+
+    formatter = choose_formatter(history_file)
+    if formatter is Format.MARKDOWN:
+        content = _format_md_paragraph(version, lines, date, prefix, md_header_level)
+        break_line = _calculate_break_line_for_md(old_lines, at_line)
+    else:
+        content = _format_rst_paragraph(version, lines, date, line_length, prefix)
+        break_line = _calculate_break_line_for_rst(old_lines, at_line)
+
+    history = "".join(old_lines[:break_line] + content + old_lines[break_line:])
+
     with history_file.open("w") as file:
         file.write(history)
     clear(history_dir)
 
 
-def _calculate_new_history(
-    history_file: Path, at_line: Optional[int], content: list[str]
-) -> str:
-    old_lines = _readlines(history_file)
-    break_line = _calculate_break_line(old_lines, at_line)
-    result = old_lines[:break_line] + content + old_lines[break_line:]
-    return "".join(result)
+def choose_formatter(history_file: Path) -> Format:
+    if history_file.suffix in {".md", ".markdown"}:
+        return Format.MARKDOWN
+    elif history_file.suffix in {".rst"}:
+        return Format.RST
+    else:
+        logger.warning("Unknown file format, faling back to rst.")
+        return Format.RST
 
 
-def _get_paragraph(
-    version: str, history_dir: Path, date: str, line_length: int, prefix: str
+def _format_rst_paragraph(
+    version: str, lines: ValuesView, date: str, line_length: int, prefix: str
 ) -> list[str]:
     header = f"{version} ({date})"
     content = [
         header + "\n",
         "+" * len(header) + "\n\n",
     ]
-    lines = [
-        format_line(prefix, line, line_length) for line in list_(history_dir).values()
-    ]
-    content += lines
+    content += [format_line(prefix, line, line_length) for line in lines]
     content.append("\n")
     return content
 
 
-def _calculate_break_line(lines: list[str], at_line: Optional[int]) -> int:
+def _format_md_paragraph(
+    version: str, lines: ValuesView, date: str, prefix: str, header_level: int
+) -> list[str]:
+    header_level = max(header_level, 1)
+    header_prefix = "#" * header_level
+    header = f"{header_prefix} {version} ({date})"
+    content = [
+        header + "\n\n",
+    ]
+    content += "".join(f"{prefix}{line}" for line in lines) + "\n"
+    return content
+
+
+def _calculate_break_line_for_rst(lines: list[str], at_line: Optional[int]) -> int:
     if at_line is not None:
         return max(int(at_line) - 1, 0)
 
@@ -91,6 +124,19 @@ def _calculate_break_line(lines: list[str], at_line: Optional[int]) -> int:
         start += 1
 
     return start + 3
+
+
+def _calculate_break_line_for_md(lines: list[str], at_line: Optional[int]) -> int:
+    if at_line is not None:
+        return max(int(at_line) - 1, 0)
+
+    start = 0
+    for line in lines:
+        if line != "\n":
+            break
+        start += 1
+
+    return start + 2
 
 
 def clear(history_dir: Path) -> None:

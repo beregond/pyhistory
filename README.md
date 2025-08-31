@@ -128,3 +128,10 @@ You can also add config to ``setup.cfg`` file. Just put ``pyhistory`` section in
   history_file = myhistory.rst
   at_line = 42
 ```
+
+## Differences in formatting
+
+If you are using markdown format you must note that:
+
+* Lines are not wrapped, setting for line length is ignored
+* There is extra config for markdown formatting - `md_header_level` (default is 2) and it sets amount of `#` in headline for version
