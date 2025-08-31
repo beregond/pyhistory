@@ -12,7 +12,7 @@ default_values = file_config.get_defaults_from_config_file_if_exists()
 
 line_length = click.option(
     "--line-length",
-    help="Formatted line length.",
+    help="Formatted line length (works only with rst files).",
     default=default_values.get("line_length", 79),
     show_default=True,
     type=int,
@@ -91,7 +91,14 @@ def _maybe_positive(context, param, value):
     "--date",
     help="Date of update. By default today, but can be arbitrary value.",
 )
-def update(context, version, at_line, date, line_length):
+@click.option(
+    "--md-header-level",
+    help="Header level for markdown files (omitted for rst files).",
+    default=default_values.get("md_header_level", 2),
+    callback=_maybe_positive,
+    type=int,
+)
+def update(context, version, at_line, date, line_length, md_header_level):
     pyhistory.update(
         version,
         context.obj["history_dir"],
@@ -100,6 +107,7 @@ def update(context, version, at_line, date, line_length):
         date,
         line_length,
         LINE_PREFIX,
+        md_header_level,
     )
 
 

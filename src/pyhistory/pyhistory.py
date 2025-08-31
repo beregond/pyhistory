@@ -56,6 +56,7 @@ def update(
     date: Optional[str] = None,
     line_length: int = 0,
     prefix: str = "",
+    md_header_level: int = 2,
 ) -> None:
     date = date or date_module.today().strftime("%Y-%m-%d")
     old_lines = _readlines(history_file)
@@ -63,7 +64,7 @@ def update(
 
     formatter = choose_formatter(history_file)
     if formatter is Format.MARKDOWN:
-        content = _format_md_paragraph(version, lines, date, prefix)
+        content = _format_md_paragraph(version, lines, date, prefix, md_header_level)
         break_line = _calculate_break_line_for_md(old_lines, at_line)
     else:
         content = _format_rst_paragraph(version, lines, date, line_length, prefix)
@@ -100,9 +101,11 @@ def _format_rst_paragraph(
 
 
 def _format_md_paragraph(
-    version: str, lines: ValuesView, date: str, prefix: str
+    version: str, lines: ValuesView, date: str, prefix: str, header_level: int
 ) -> list[str]:
-    header = f"## {version} ({date})"
+    header_level = max(header_level, 1)
+    header_prefix = "#" * header_level
+    header = f"{header_prefix} {version} ({date})"
     content = [
         header + "\n\n",
     ]
