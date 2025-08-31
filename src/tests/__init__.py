@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 FIXTURES_DIR_PATH = Path(__file__).parent / "fixtures"
@@ -45,14 +46,14 @@ def isolated_workdir(test_function):
     return wrapped
 
 
-def isolated_env(test_function):
-    def wrapped(*args, **kwargs):
-        temp_dir = tempfile.mkdtemp()
-        history_file = Path(temp_dir) / "HISTORY.rst"
-        history_dir = Path(temp_dir) / "history"
-        try:
-            test_function(history_dir, history_file, *args, **kwargs)
-        finally:
-            shutil.rmtree(temp_dir)
+@contextmanager
+def isolated_env():
+    temp_dir = tempfile.mkdtemp()
+    original_working_dir = os.getcwd()
+    os.chdir(temp_dir)
 
-    return wrapped
+    try:
+        yield Path(temp_dir)
+    finally:
+        os.chdir(original_working_dir)
+        shutil.rmtree(temp_dir)

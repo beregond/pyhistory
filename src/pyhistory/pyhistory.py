@@ -1,11 +1,21 @@
 import time
+import logging
+from enum import Enum
 from datetime import date as date_module
 from hashlib import md5
 from itertools import count
 from pathlib import Path
-from typing import Optional
+from typing import Optional, ValuesView
 
 from .utilities import format_line
+
+
+logger = logging.getLogger(__name__)
+
+
+class Format(Enum):
+    MARKDOWN = "markdown"
+    RST = "rst"
 
 
 def add(message: str, history_dir: Path) -> None:
@@ -48,7 +58,12 @@ def update(
     prefix: str = "",
 ) -> None:
     date = date or date_module.today().strftime("%Y-%m-%d")
-    content = _get_paragraph(version, history_dir, date, line_length, prefix)
+    formatter = choose_formatter(history_file)
+    lines = list_(history_dir).values()
+    if formatter is Format.MARKDOWN:
+        content = _format_md_paragraph(version, lines, date, line_length, prefix)
+    else:
+        content = _format_rst_paragraph(version, lines, date, line_length, prefix)
     history = _calculate_new_history(history_file, at_line, content)
     with history_file.open("w") as file:
         file.write(history)
@@ -64,18 +79,38 @@ def _calculate_new_history(
     return "".join(result)
 
 
-def _get_paragraph(
-    version: str, history_dir: Path, date: str, line_length: int, prefix: str
+def choose_formatter(history_file: Path) -> Format:
+    if history_file.suffix in {".md", ".markdown"}:
+        return Format.MARKDOWN
+    elif history_file.suffix in {".rst"}:
+        return Format.RST
+    else:
+        logger.warning("Unknown file format, faling back to rst.")
+        return Format.RST
+
+
+def _format_rst_paragraph(
+    version: str, lines: ValuesView, date: str, line_length: int, prefix: str
 ) -> list[str]:
     header = f"{version} ({date})"
     content = [
         header + "\n",
         "+" * len(header) + "\n\n",
     ]
-    lines = [
-        format_line(prefix, line, line_length) for line in list_(history_dir).values()
+    content += [format_line(prefix, line, line_length) for line in lines]
+    content.append("\n")
+    return content
+
+
+def _format_md_paragraph(
+    version: str, lines: ValuesView, date: str, line_length: int, prefix: str
+) -> list[str]:
+    header = f"{version} ({date})"
+    content = [
+        header + "\n",
+        "+" * len(header) + "\n\n",
     ]
-    content += lines
+    content += [format_line(prefix, line, line_length) for line in lines]
     content.append("\n")
     return content
 
