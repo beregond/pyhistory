@@ -33,7 +33,7 @@ PyHistory: CLI (`pyhistory`, alias `pyhi`) that keeps changelog entries as per-e
 
 ## CI / Docs hosting
 - `.github/workflows/test.yml`: triggers on `pull_request` only. Job `build`: matrix Python 3.11-3.15, `pip install .[dev]`, `pytest --cov .`. Job `lint`: `astral-sh/ruff-action`.
-- Action versions: `actions/checkout@v7`, `actions/setup-python@v7`, `astral-sh/ruff-action@v4` (v4 uses node24 runtime).
+- Action versions: `actions/checkout@v7`, `actions/setup-python@v7`, `astral-sh/ruff-action@v4.1.0` (v4 uses node24 runtime). ruff-action publishes NO floating major tag (`@v4` fails to resolve) - always pin the full version; check with `git ls-remote --tags https://github.com/astral-sh/ruff-action.git`.
 - `.readthedocs.yaml`: ubuntu-24.04, Python 3.14, `docs/conf.py`, deps from `docs/requirements.txt`.
 
 ## Gotchas
