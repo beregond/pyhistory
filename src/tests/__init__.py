@@ -10,15 +10,19 @@ TEST_DIR = Path.cwd() / TEST_DIR_NAME
 
 
 def load_fixture(fixture_name, destination):
-    with (FIXTURES_DIR_PATH / fixture_name).open() as fixture:
-        with (Path.cwd() / destination).open("w") as dest:
-            dest.write(fixture.read())
+    with (
+        (FIXTURES_DIR_PATH / fixture_name).open() as fixture,
+        (Path.cwd() / destination).open("w") as dest,
+    ):
+        dest.write(fixture.read())
 
 
 def load_fixture_to(fixture_name, destination):
-    with (FIXTURES_DIR_PATH / fixture_name).open() as fixture:
-        with destination.open("w") as dest:
-            dest.write(fixture.read())
+    with (
+        (FIXTURES_DIR_PATH / fixture_name).open() as fixture,
+        destination.open("w") as dest,
+    ):
+        dest.write(fixture.read())
 
 
 def get_test_file_content(name):

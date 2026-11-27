@@ -2,7 +2,7 @@ import pytest
 
 from pyhistory.pyhistory import add, delete, list_, update
 
-from . import get_fixture_content, load_fixture_to, isolated_env
+from . import get_fixture_content, isolated_env, load_fixture_to
 
 
 def test_update():
