@@ -1,14 +1,13 @@
-import time
 import logging
-from enum import Enum
+import time
+from collections.abc import ValuesView
 from datetime import date as date_module
+from enum import Enum
 from hashlib import md5
 from itertools import count
 from pathlib import Path
-from collections.abc import ValuesView
 
 from .utilities import format_line
-
 
 logger = logging.getLogger(__name__)
 

@@ -20,14 +20,14 @@ PyHistory: CLI (`pyhistory`, alias `pyhi`) that keeps changelog entries as per-e
   - `pyhi update <version>` compiles fragments into `HISTORY.rst` at release time - only the maintainer runs it.
   - Style: past tense, one sentence, trailing period, e.g. "Added support for python 3.15."
 - Use `X | None` (not `typing.Optional`), builtin generics (`list[str]`) and `collections.abc` types; ruff UP035/UP045 enforce this.
-- No ruff config: ruff defaults, same as CI.
+- No ruff config: ruff defaults, same as CI (CI installs the latest ruff, so new default rules can appear without code changes).
 - Tests live in `src/tests/`; no tox/setup.py.
 
 ## Commands
 - Setup: `python -m venv .venv && .venv/bin/pip install -e '.[dev]' ruff build`
 - Test: `pytest --cov .` (CI) or `pytest -q`
 - Min-version check: `uv run --no-project --python 3.11 --with pytest --with-editable . pytest -q` (creates `uv.lock`; delete it, do not commit)
-- Lint: `ruff check .`; format check: `ruff format --check .` (passes)
+- Lint: `ruff check .`; format check: `ruff format --check .` (both must pass)
 - Build: `python -m build` (sdist + wheel, no warnings); output in `dist/` (gitignored)
 - Docs: `pip install -e '.[docs]'` then sphinx in `docs/` (needs `sphinx_mdinclude`)
 
@@ -38,10 +38,9 @@ PyHistory: CLI (`pyhistory`, alias `pyhi`) that keeps changelog entries as per-e
 
 ## Gotchas
 - Baseline: 43 tests pass (99% coverage) on 3.11, 3.14 and 3.15.
-- `ruff check .` currently reports 16 pre-existing findings (I001 in several files incl. `pyhistory.py`, UP009 `docs/conf.py`, UP004 + B006 `utilities.py`, SIM117 `tests/__init__.py`, ISC004 `test_cli.py`). The CI lint job therefore fails on them; fix is a separate task.
+- `ruff check .` and `ruff format --check .` must both pass (CI lint job). Default rules in recent ruff include isort (I001), pyupgrade (UP), bugbear (B), simplify (SIM) and ISC - run `ruff check --fix . && ruff format .` before pushing.
 - Sphinx build not verified (docs extras were missing in QA environment).
 - `docs/installation.rst` still says `easy_install`; not updated.
 
 ## Follow-ups
 - Replace `toml` with stdlib `tomllib` (possible now that 3.11 is the minimum).
-- Clean up pre-existing ruff findings.

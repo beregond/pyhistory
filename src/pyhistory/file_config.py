@@ -1,11 +1,11 @@
-import toml
-from typing import Any
-
 from configparser import ConfigParser
 from pathlib import Path
+from typing import Any
 
-from .utilities import find_file_across_parents
+import toml
+
 from .exceptions import FileNotFound
+from .utilities import find_file_across_parents
 
 CFG_FILE_TO_CHECK = "setup.cfg"
 TOML_FILE_TO_CHECK = "pyproject.toml"

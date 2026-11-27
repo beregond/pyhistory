@@ -106,24 +106,30 @@ def test_update_with_line_too_long():
         _run(
             [
                 "add",
-                "some very long and sophisticated message, which is too "
-                "long to fit 79 characters",
+                (
+                    "some very long and sophisticated message, which is too "
+                    "long to fit 79 characters"
+                ),
             ]
         )
         _run(
             [
                 "add",
-                "next message, which also is very long, but should fit "
-                "into 79 characters aaaa",
+                (
+                    "next message, which also is very long, but should fit "
+                    "into 79 characters aaaa"
+                ),
             ]
         )
         _run(
             [
                 "add",
-                "let just say Lorem ipsum dolor sit amet consectetur "
-                "adipisicing elit, sed do eiusmod tempor incididunt ut labore et "
-                "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud "
-                "exercitation ullamco",
+                (
+                    "let just say Lorem ipsum dolor sit amet consectetur "
+                    "adipisicing elit, sed do eiusmod tempor incididunt ut labore et "
+                    "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud "
+                    "exercitation ullamco"
+                ),
             ]
         )
 
@@ -141,8 +147,10 @@ def test_list_long_line():
         result = _run(
             [
                 "add",
-                "some very long and sophisticated message, which is too "
-                "long to fit 79 characters",
+                (
+                    "some very long and sophisticated message, which is too "
+                    "long to fit 79 characters"
+                ),
             ]
         )
 
@@ -196,8 +204,10 @@ def test_delete_long_lines():
         _run(
             [
                 "add",
-                "some very long and sophisticated message, which is too "
-                "long to fit 79 characters",
+                (
+                    "some very long and sophisticated message, which is too "
+                    "long to fit 79 characters"
+                ),
             ]
         )
         messages = [
@@ -215,8 +225,10 @@ def test_delete_long_lines():
         _run(
             [
                 "add",
-                "next message, which also is very long, and should not "
-                "fit into 79 characters",
+                (
+                    "next message, which also is very long, and should not "
+                    "fit into 79 characters"
+                ),
             ]
         )
 

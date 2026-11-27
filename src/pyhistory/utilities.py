@@ -25,8 +25,8 @@ def _make_lines_from_words(words, line_length):
     yield line.flush()
 
 
-class _LineBuffer(object):
-    def __init__(self, words=[]):
+class _LineBuffer:
+    def __init__(self, words=None):
         self.words = words or []
 
     @property
