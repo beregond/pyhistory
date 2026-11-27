@@ -5,7 +5,7 @@ from datetime import date as date_module
 from hashlib import md5
 from itertools import count
 from pathlib import Path
-from typing import Optional, ValuesView
+from collections.abc import ValuesView
 
 from .utilities import format_line
 
@@ -52,8 +52,8 @@ def update(
     version: str,
     history_dir: Path,
     history_file: Path,
-    at_line: Optional[int] = None,
-    date: Optional[str] = None,
+    at_line: int | None = None,
+    date: str | None = None,
     line_length: int = 0,
     prefix: str = "",
     md_header_level: int = 2,
@@ -113,7 +113,7 @@ def _format_md_paragraph(
     return content
 
 
-def _calculate_break_line_for_rst(lines: list[str], at_line: Optional[int]) -> int:
+def _calculate_break_line_for_rst(lines: list[str], at_line: int | None) -> int:
     if at_line is not None:
         return max(int(at_line) - 1, 0)
 
@@ -126,7 +126,7 @@ def _calculate_break_line_for_rst(lines: list[str], at_line: Optional[int]) -> i
     return start + 3
 
 
-def _calculate_break_line_for_md(lines: list[str], at_line: Optional[int]) -> int:
+def _calculate_break_line_for_md(lines: list[str], at_line: int | None) -> int:
     if at_line is not None:
         return max(int(at_line) - 1, 0)
 
