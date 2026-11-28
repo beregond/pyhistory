@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Build the Sphinx docs and serve them locally.
+# Usage: serve-docs [PORT]   (default port: 8000)
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+port="${1:-8000}"
+out="$root/docs/_build/html"
+
+if [[ -x "$root/.venv/bin/python" ]]; then
+    python="$root/.venv/bin/python"
+else
+    python="$(command -v python3)"
+fi
+
+if ! "$python" -c "import sphinx, furo, sphinx_mdinclude" 2>/dev/null; then
+    echo "Installing docs dependencies into $("$python" -c 'import sys; print(sys.prefix)')..."
+    if "$python" -m pip --version >/dev/null 2>&1; then
+        "$python" -m pip install -q -e "$root[docs]"
+    else
+        # e.g. a uv-created venv, which has no pip
+        uv pip install -q --python "$python" -e "$root[docs]"
+    fi
+fi
+
+"$python" -m sphinx -E -b html "$root/docs" "$out"
+
+echo "Serving docs at http://localhost:$port (Ctrl+C to stop)"
+exec "$python" -m http.server "$port" --bind 127.0.0.1 --directory "$out"

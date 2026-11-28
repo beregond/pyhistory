@@ -30,7 +30,7 @@ pyhi = "pyhistory.cli:main"
 
 [project.optional-dependencies]
 dev = ["coverage", "mccabe", "pytest", "pytest-cov"]
-docs = ["sphinx", "sphinx-mdinclude"]
+docs = ["sphinx", "sphinx-mdinclude", "furo"]
 
 [tool.hatch.version]
 source = "versioningit"

@@ -2,11 +2,19 @@
 Installation
 ============
 
-At the command line::
+`pyhistory` supports Python 3.11 to 3.15.
 
-    $ easy_install pyhistory
+Install it from PyPI::
 
-Or, if you have virtualenvwrapper installed::
-
-    $ mkvirtualenv pyhistory
     $ pip install pyhistory
+
+Or, if you want to keep it isolated in a virtual environment::
+
+    $ python -m venv .venv
+    $ source .venv/bin/activate
+    $ pip install pyhistory
+
+Runtime dependencies (`click` and `toml`) are installed automatically.
+
+After installation two equivalent commands are available: ``pyhistory`` and
+its shortcut ``pyhi``.
