@@ -11,7 +11,7 @@ PyHistory: CLI (`pyhistory`, alias `pyhi`) that keeps changelog entries as per-e
 - `src/tests/` - pytest tests (+ `fixtures/`)
 - `docs/` - Sphinx with furo theme (`conf.py`, `requirements.txt` used by Read the Docs)
 - `history/` - pending changelog fragments, one file per entry, committed with the change; `HISTORY.rst` - compiled changelog (`[tool.pyhistory]` in pyproject)
-- `.github/workflows/test.yml`, `.readthedocs.yaml`
+- `.github/workflows/test.yml`, `.github/workflows/release.yml`, `.readthedocs.yaml`
 
 ## Conventions
 - Changelog: this repo dogfoods its own tool. Every user-visible change (incl. supported Python versions) gets an entry added with `pyhi add "Message."` (alias of `pyhistory`; run from the repo root, after `pip install -e .`). It writes a fragment file into `history/`; `git add` it with the change.
@@ -35,6 +35,8 @@ PyHistory: CLI (`pyhistory`, alias `pyhi`) that keeps changelog entries as per-e
 ## CI / Docs hosting
 - `.github/workflows/test.yml`: triggers on `pull_request` only. Job `build`: matrix Python 3.11-3.15, `pip install .[dev]`, `pytest --cov .`. Job `lint`: `astral-sh/ruff-action`.
 - Action versions: `actions/checkout@v7`, `actions/setup-python@v7`, `astral-sh/ruff-action@v4.1.0` (v4 uses node24 runtime). ruff-action publishes NO floating major tag (`@v4` fails to resolve) - always pin the full version; check with `git ls-remote --tags https://github.com/astral-sh/ruff-action.git`.
+- `.github/workflows/release.yml` (same as jsonmodels): runs on any pushed tag, only in `beregond/pyhistory`. Builds sdist + wheel (`python -m build`, `twine check`), checks the built files carry exactly the tag's version (version comes from the git tag via versioningit, there is no static version in `pyproject.toml`), then uploads to PyPI with trusted publishing (`pypa/gh-action-pypi-publish@release/v1`, GitHub environment `pypi`, `id-token: write`; no API token). Requires a trusted publisher configured on pypi.org for this repo/workflow/environment.
+- Release steps (maintainer): `pyhi update <version>`, commit, `git tag <version>` (no `v` prefix, matching existing tags), push the commit and the tag.
 - `.readthedocs.yaml`: ubuntu-24.04, Python 3.14, `docs/conf.py`, deps from `docs/requirements.txt`.
 
 ## Gotchas
